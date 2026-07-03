@@ -25,3 +25,4 @@ replay_pid*
 pdf/*
 markdown/*
 img/*
+.vscode/
