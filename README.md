@@ -44,16 +44,3 @@ O repositório na branch `main` contém a estrutura de controllers e modelos pro
 3. Construir o fluxo multimodal de processamento de imagem de cupons e áudio no agente.
 
 Se precisar de ajuda ou ficar travado, consulte o código completo na branch **`solucao`** ou faça checkout nos passos sequenciais do workshop (`git checkout passo-1`, etc.).
-
----
-
-## 🔗 Guias de Planejamento Sequencial
-Toda a teoria, setup e lógica detalhada do minicurso estão divididos nos seguintes arquivos da pasta `markdown/`:
-1. [1. Apresentação e Ementa](markdown/1_planning_apresentacao.md)
-2. [2. Arquitetura de Referência & Cronograma](markdown/2_planning_visao_geral.md)
-3. [3. Fundamentação Teórica de IA](markdown/3_planning_parte1_conceitos.md)
-4. [4. Guia de Setup & Docker](markdown/4_planning_parte2_setup.md)
-5. [5. Guia de Codificação Hands-on](markdown/5_planning_parte3_hands_on.md)
-6. [6. Validação, Testes & Observabilidade](markdown/6_planning_parte4_testes_obs.md)
-7. [7. Checklist de Slides & Repositório](markdown/checklist_preparacao_material.md)
-8. [8. Respostas para Organização do Evento](markdown/respostas_organizacao_evento.md)
