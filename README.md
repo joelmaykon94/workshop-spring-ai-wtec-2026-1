@@ -1,134 +1,60 @@
-# Workshop Spring AI - WTEC 2026
+# Workshop Spring AI - WTEC 2026 (Gabarito Oficial 🟢)
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/joelmaykon94/workshop-spring-ai-wtec-2026-1)
+
+> **⚠️ AVISO:** Você está na branch **`solucao`**. Esta branch contém a implementação completa, refatorada e arquiteturalmente finalizada do projeto. Para o template inicial do minicurso, mude para a branch `main`.
 
 Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para Detecção de Fraudes usando Spring AI.
 
-## 🚀 Ambiente (Codespaces)
+## 🏛️ Arquitetura da Solução
 
-Este projeto foi otimizado para rodar diretamente no GitHub Codespaces. Ao iniciar o seu Codespace, o Docker Compose subirá **automaticamente** os serviços de banco e mensageria (PostgreSQL, Kafka, MinIO e Langfuse).
+Neste projeto nós construímos uma orquestração reativa onde um Agente de Inteligência Artificial atua como Auditor de Fraudes para transações financeiras.
 
-1. **Como verificar se os containers subiram:**
-   Abra o terminal do Codespaces e execute:
+*   **Padrão MVC + Services:** Controladores limpos e lógicas de orquestração encapsuladas na camada de `Service` (`FraudService.java`).
+*   **Multimodalidade (Spring AI + Gemini 1.5 Flash):** Análise combinada de dados estruturados em JSON e fotos de cupons fiscais baixadas dinamicamente via bucket S3.
+*   **Vector Database (PGVector):** Utilização do padrão **RAG** (Retrieval-Augmented Generation) para buscar o histórico de fraudes anteriores do usuário e prover contexto extra ao LLM.
+*   **SAGA Pattern (Kafka):** Quando o Agente de IA detecta que uma transação é fraude, o sistema dispara um evento em um tópico Kafka (`fraud-compensations`) instruindo serviços parceiros (ex: Ledger Bancário) a realizar o Rollback (Estorno) do valor imediatamente.
+*   **Observabilidade (Langfuse):** Traçabilidade de todo o fluxo (Traces), latência por etapa (Spans) e log completo de tokens consumidos pelas gerações LLM (Generations) em tempo real.
+
+---
+
+## 🚀 Como Executar o Gabarito (Codespaces)
+
+O ambiente no GitHub Codespaces subirá **automaticamente** os serviços base no Docker Compose (PostgreSQL, Kafka, MinIO e Langfuse).
+
+1. **Dashboards Web (Aba Ports):**
+   *   **Langfuse (Porta 3000):** Painel de Observabilidade. Crie uma conta e gere suas chaves em Settings > API Keys.
+   *   **MinIO (Porta 9001):** Nosso S3 local. Login: `minioadmin / minioadmin`.
+
+2. **Configurando as Chaves (.env):**
+   Renomeie `.env.example` para `.env` e preencha:
    ```bash
-   docker ps
+   cp .env.example .env
    ```
+   *As chaves necessárias são `OPENAI_API_KEY` (Gemini via Google AI Studio) e as chaves do Langfuse.*
 
-2. **Configurando a API da IA (Google Gemini 1.5 Flash):**
-   Para não sobrecarregar o Codespaces com modelos locais, o projeto está configurado para usar a API gratuita do Google Gemini.
-   - Crie uma chave de API grátis no [Google AI Studio](https://aistudio.google.com/app/apikey).
-   
-3. **Pegando as chaves do Langfuse:**
-   - Acesse o painel do Langfuse (Porta `3000` na aba Ports).
-   - Crie um projeto, vá em **Settings** > **API Keys** e crie novas chaves (Public e Secret Key).
-
-4. **Rodando o Projeto (Terminal):**
-   Execute o comando abaixo substituindo as chaves pelas suas:
+3. **Iniciando a Aplicação Spring Boot:**
    ```bash
-   OPENAI_API_KEY="sua_chave_do_google" \
-   LANGFUSE_PUBLIC_KEY="pk-lf-..." \
-   LANGFUSE_SECRET_KEY="sk-lf-..." \
    ./mvnw spring-boot:run
    ```
 
-*(O projeto já está configurado para apontar automaticamente para o `localhost` para conectar ao Postgres, Kafka e MinIO de forma transparente!)*
+---
 
-## 📊 Dashboards Web (Aba Ports)
+## 🧪 Testando a Orquestração Completa
 
-No VS Code do Codespaces, clique na aba **Ports** (Portas) na parte inferior. Certifique-se de alterar a *Visibility* (Visibilidade) para **Public** (Pública) clicando com o botão direito na porta desejada:
-*   **Langfuse (Porta 3000):** Painel de Observabilidade dos Prompts da IA. Crie uma conta local e gere suas chaves em Settings > API Keys.
-*   **MinIO (Porta 9001):** Nosso "S3" local. Login: `minioadmin / minioadmin`.
+Com o sistema rodando, você pode iniciar o nosso "Canhão de Transações". Preparamos um Endpoint que simula a chegada em tempo real de **10 transações bancárias variadas** (algumas legais, outras super fraudulentas).
 
-## 🧪 Testando a API (cURL)
-
-Para facilitar os testes práticos durante o workshop, preparamos uma pasta `test-data/` contendo diferentes cenários de transações e comprovantes reais (anonimizados).
-
-### Setup do MinIO (Obrigatório)
-Antes de rodar os testes, é necessário enviar as imagens para o bucket `fraud-images` no MinIO (para simular um upload de um app). Execute os comandos abaixo em um terminal:
+Abra outro terminal e execute:
 ```bash
-docker cp test-data/itau_uni.png fraud-minio:/tmp/
-docker exec fraud-minio mc cp /tmp/itau_uni.png myminio/fraud-images/itau_uni.png
-
-docker cp test-data/receipt_b_dot.png fraud-minio:/tmp/
-docker exec fraud-minio mc cp /tmp/receipt_b_dot.png myminio/fraud-images/receipt_b_dot.png
+curl -X POST http://localhost:8080/api/fraud/simulate
 ```
 
-### 1. Cenário: Transação Legítima
-Testa uma transação normal, referenciando o comprovante `itau_uni.png`. O Agente IA deve deduzir que não é fraude.
-```bash
-curl -X POST -H "Content-Type: application/json" -d @test-data/payload-itau-legitimo.json http://localhost:8080/api/fraud/analyze
-```
+**O que vai acontecer debaixo dos panos?**
+1. O controlador de simulação gerará dados na mosca e fará o download de recibos customizados via API do Placehold, subindo eles no **MinIO**.
+2. Ele vai fazer o **Seed (Alimentação do RAG)** com as transações 1 e 2 no PGVector.
+3. Nas transações de 3 a 10, ele acionará o `FraudDetectionAgent`.
+4. O Agente executará: RAG -> Recuperação Multimodal -> Engenharia de Prompt -> Chamada ao Gemini -> Registro no Langfuse.
+5. Se for Fraude, ele aciona o Apache Kafka para emitir o estorno da SAGA.
+6. Há um *Rate Limiting Control* de 15 segundos entre requisições implementado na simulação para respeitar com folga a cota do plano gratuito do Gemini (15 RPM).
 
-### 2. Cenário: Transação Fraudulenta
-Testa uma transação suspeita, referenciando o `receipt_b_dot.png`. O Agente IA deve bloquear (isFraud: true) e acionar a Saga de Compensação.
-```bash
-curl -X POST -H "Content-Type: application/json" -d @test-data/payload-receipt-falso.json http://localhost:8080/api/fraud/analyze
-```
-
-### 3. Semeando Dados no RAG (Vector Store)
-Para popular o histórico de conhecimento da aplicação com uma transação:
-```bash
-curl -X POST -H "Content-Type: application/json" -d @test-data/test-payload.json http://localhost:8080/api/fraud/seed
-```
-
----
-
-## Estrutura do Workshop
-
-Este repositório contém o código-fonte e o guia prático do workshop ministrado no **WTEC 2026.1**. O objetivo é demonstrar a transição de APIs CRUD tradicionais para **Agentes Cognitivos Multimodais** capazes de correlacionar metadados estruturados, fotos de cupons fiscais (visão) e áudios de autorização de voz (áudio) para identificar fraudes em transações financeiras em tempo real.
-
----
-
-## 🚀 Como Iniciar a Prática (Passo a Passo)
-
-Para garantir que você consiga codificar e salvar suas alterações sem problemas de permissão, siga a ordem abaixo:
-
-### Passo 1: Fazer Fork do Repositório (Obrigatório)
-1. Estando nesta página, clique no botão **Fork** no canto superior direito do GitHub.
-2. Isso criará uma cópia idêntica deste projeto em sua conta pessoal do GitHub (ex: `github.com/seu-usuario/workshop-spring-ai-wtec-2026-1`).
-
-### Passo 2: Inicializar o Ambiente em Nuvem
-1. No seu repositório bifurcado (Fork), clique no botão verde **<> Code**.
-2. Selecione a aba **Codespaces** e clique em **Create codespace on main** (ou clique no badge abaixo no seu fork):
-
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/joelmaykon94/workshop-spring-ai-wtec-2026-1)
-
----
-
-## 🛠️ Orquestração Automática
-
-Assim que o Codespace abrir no seu navegador, a configuração interna (`.devcontainer.json`) executará o Docker Compose em segundo plano automaticamente para subir a infraestrutura base de dados e mensageria:
-- **PostgreSQL** com a extensão `pgvector` (Para RAG).
-- **MinIO** (Armazenamento S3 para recibos).
-- **Kafka** (Mensageria assíncrona para orquestração da Saga).
-- **Langfuse** (Painel web para observabilidade da Inteligência Artificial).
-
-*(Nota: O servidor de IA Ollama foi removido da stack local para evitar sobrecarga de Memória RAM no Codespaces. A aplicação foi reconfigurada para rodar incrivelmente rápido e leve conectando-se a APIs de nuvem como Google Gemini via protocolo OpenAI.)*
-
----
-
-## 📝 O Desafio Hands-on
-O repositório na branch `main` contém a estrutura de controllers e modelos pronta, mas as regras de busca vetorial e injeção multimodal estão vazias. Seu objetivo durante o minicurso é:
-1. Implementar a busca semântica em **`VectorSearchService.java`**.
-2. Configurar o **`ChatClient`** com Advisors de memória/RAG e Tools no **`FraudDetectionAgent.java`**.
-3. Construir o fluxo multimodal de processamento de imagem de cupons e áudio no agente.
-
-Se precisar de ajuda ou ficar travado, consulte o código completo na branch **`solucao`** ou faça checkout nos passos sequenciais do workshop (`git checkout passo-1`, etc.).
-
----
-
-## 📚 Referências e Documentações
-
-Para aprofundamento durante e após o workshop, consulte a documentação oficial das ferramentas que utilizamos:
-
-*   **Spring AI**
-    *   [Visão Geral do Spring AI](https://spring.io/projects/spring-ai#overview)
-    *   [API do ChatClient (Prompts e Chamadas)](https://docs.spring.io/spring-ai/reference/api/chatclient.html)
-    *   [Bancos de Dados Vetoriais (PGVector)](https://docs.spring.io/spring-ai/reference/api/vectordbs.html)
-    *   [Multimodalidade (Visão e Áudio)](https://docs.spring.io/spring-ai/reference/api/multimodality.html)
-*   **Inteligência Artificial**
-    *   [Google AI Studio (Gemini API)](https://aistudio.google.com/)
-*   **Infraestrutura e Observabilidade**
-    *   [Langfuse (LLM Observability)](https://langfuse.com/docs)
-    *   [Apache Kafka (Saga Pattern)](https://kafka.apache.org/documentation/)
-    *   [MinIO (Object Storage S3)](https://min.io/docs/minio/linux/index.html)
+*Volte ao painel do **Langfuse** para ver a mágica acontecendo em lindos gráficos!*
