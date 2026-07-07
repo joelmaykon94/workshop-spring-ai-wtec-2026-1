@@ -18,11 +18,19 @@ Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para 
    cd workshop-spring-ai
    ```
 
-### Passo 3: Inicializar a Infraestrutura Base (Docker)
-Este projeto possui um `docker-compose.yml` pré-configurado com tudo que precisamos.
-Abra o terminal na pasta do projeto e execute:
+### Passo 3: Inicializar a Infraestrutura Base (Automático)
+Preparamos scripts para automatizar a criação do arquivo `.env` e a subida dos containers no Docker.
+No terminal, dentro da pasta do projeto, rode o script correspondente ao seu sistema:
+
+**Se usar Mac/Linux:**
 ```bash
-docker compose up -d
+chmod +x setup.sh
+./setup.sh
+```
+
+**Se usar Windows:**
+```cmd
+setup.bat
 ```-
 
 ## 🛠️ Orquestração Automática e Infraestrutura
