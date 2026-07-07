@@ -21,24 +21,7 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./scripts:/docker-entrypoint-initdb.d
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: fraud-ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    entrypoint: [ "/bin/sh", "-c" ]
-    command:
-      - |
-        ollama serve &
-        sleep 5
-        echo "=== Baixando Modelo Multimodal llama3.2-vision ==="
-        ollama pull llama3.2-vision
-        echo "=== Baixando Modelo de Embeddings nomic-embed-text ==="
-        ollama pull nomic-embed-text
-        echo "Modelos prontos!"
-        tail -f /dev/null
+
 
   minio:
     image: minio/minio:latest
@@ -76,7 +59,7 @@ services:
       CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
 
   langfuse:
-    image: langfuse/langfuse:latest
+    image: langfuse/langfuse:2
     container_name: fraud-langfuse
     ports:
       - "3000:3000"
@@ -101,6 +84,5 @@ services:
 
 volumes:
   pgdata:
-  ollama_data:
   minio_data:
   langfuse_db_data:
