@@ -12,7 +12,7 @@ class FraudControllerTest {
     @Test
     void shouldAnalyzeTransactionAndNotTriggerSagaWhenNotFraud() {
         // Arrange
-        Transaction tx = new Transaction("tx-1", "user-1", 100.0, "Supermercado", "SP", "dev-1", "127.0.0.1", "2026-07-07T10:00:00Z", null);
+        Transaction tx = new Transaction("tx-1", "user-1", 100.0, "Supermercado", "SP", "dev-1", "127.0.0.1", "2026-07-07T10:00:00Z", null, null);
         
         StubFraudAnalyzer agent = new StubFraudAnalyzer(new FraudAnalysis(false, "Transação padrão.", 0.95));
         StubTransactionSagaService sagaService = new StubTransactionSagaService();
@@ -34,7 +34,7 @@ class FraudControllerTest {
     @Test
     void shouldAnalyzeTransactionAndTriggerSagaWhenFraudDetected() {
         // Arrange
-        Transaction tx = new Transaction("tx-2", "user-2", 15000.0, "Loja de Eletrônicos", "RJ", "dev-2", "192.168.1.1", "2026-07-07T02:00:00Z", null);
+        Transaction tx = new Transaction("tx-2", "user-2", 15000.0, "Loja de Eletrônicos", "RJ", "dev-2", "192.168.1.1", "2026-07-07T02:00:00Z", null, null);
         
         StubFraudAnalyzer agent = new StubFraudAnalyzer(new FraudAnalysis(true, "Valor atípico.", 0.99));
         StubTransactionSagaService sagaService = new StubTransactionSagaService();
@@ -57,7 +57,7 @@ class FraudControllerTest {
     @Test
     void shouldSeedSuspiciousTransactionSuccessfully() {
         // Arrange
-        Transaction tx = new Transaction("tx-3", "user-3", 500.0, "Loja Falsa", "SP", "dev-3", "10.0.0.1", "2026-07-07T12:00:00Z", null);
+        Transaction tx = new Transaction("tx-1", "user-1", 100.0, "Loja A", "SP", "dev-1", "10.0.0.1", "2026-07-07T12:00:00Z", null, null);
         
         StubVectorSearchService vectorService = new StubVectorSearchService();
         FraudService fraudService = new FraudService(null, vectorService, null);
