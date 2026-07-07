@@ -25,6 +25,5 @@
       ]
     }
   },
-  "remoteUser": "vscode",
-  "postCreateCommand": "docker compose up -d"
+  "remoteUser": "vscode"
 }
