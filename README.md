@@ -18,24 +18,19 @@ Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para 
    cd workshop-spring-ai
    ```
 
-### Passo 3: Inicializar a Infraestrutura Base (Automático)
-Preparamos scripts para automatizar a criação do arquivo `.env` e a subida dos containers no Docker.
-No terminal, dentro da pasta do projeto, rode o script correspondente ao seu sistema:
+### Passo 3: Abrir no VS Code com Dev Containers (A Mágica)
+Não perca tempo instalando o Java 21 ou configurando variáveis na sua máquina física! Faremos isso via Container:
+1. Abra o **Visual Studio Code**.
+2. Vá em `Extensions` (Extensões) e instale a extensão oficial da Microsoft chamada **"Dev Containers"**.
+3. No VS Code, clique em `File > Open Folder...` e abra a pasta do projeto `workshop-spring-ai`.
+4. Um aviso aparecerá no canto inferior direito: *"Folder contains a Dev Container configuration file"*. Clique no botão **Reopen in Container**.
+   *(Se o aviso não aparecer, pressione `Ctrl+Shift+P` ou `Cmd+Shift+P`, digite **Dev Containers: Rebuild and Reopen in Container**).*
 
-**Se usar Mac/Linux:**
-```bash
-chmod +x setup.sh
-./setup.sh
-```
-
-**Se usar Windows:**
-```cmd
-setup.bat
-```-
+O VS Code baixará o Java 21, as extensões do Spring e subirá os containers do banco de dados e mensageria automaticamente. Sua máquina continuará limpa!-
 
 ## 🛠️ Orquestração Automática e Infraestrutura
 
-Assim que você rodar o Docker Compose, ele subirá em segundo plano a infraestrutura base:
+Assim que o container iniciar, o Docker Compose já terá subido em segundo plano a infraestrutura base:
 - **PostgreSQL** com a extensão `pgvector` (Para RAG).
 - **MinIO** (Armazenamento S3 para recibos).
 - **Kafka** (Mensageria assíncrona para orquestração da Saga).
@@ -51,7 +46,7 @@ Assim que você rodar o Docker Compose, ele subirá em segundo plano a infraestr
 ## ⚙️ Configurando o Projeto
 
 1. **Variáveis de Ambiente:**
-   Renomeie o arquivo `.env.example` para `.env` na raiz do projeto:
+   Abra o terminal integrado do VS Code (que já estará rodando dentro do Linux do Dev Container) e renomeie o arquivo `.env.example` para `.env`:
    ```bash
    cp .env.example .env
    ```
