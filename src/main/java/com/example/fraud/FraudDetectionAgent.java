@@ -1,15 +1,19 @@
 package com.example.fraud;
 
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class FraudDetectionAgent {
 
     private final VectorSearchService vectorSearchService;
-    // TODO: Injetar ChatClient ou outros componentes necessários
+    private final ChatClient chatClient;
 
-    public FraudDetectionAgent(VectorSearchService vectorSearchService) {
+    public FraudDetectionAgent(VectorSearchService vectorSearchService, ChatClient.Builder chatClientBuilder) {
         this.vectorSearchService = vectorSearchService;
+        this.chatClient = chatClientBuilder.build();
     }
 
     /**
@@ -20,11 +24,31 @@ public class FraudDetectionAgent {
      * @return Objeto FraudAnalysis contendo o veredito e justificativa.
      */
     public FraudAnalysis analyze(Transaction transaction) {
-        // TODO: Implementar a lógica do agente cognitivo
-        // 1. Chamar vectorSearchService.findSimilarSuspiciousTransactions(transaction)
-        // 2. Construir o Prompt com a transação atual e o histórico retornado pelo RAG
-        // 3. Chamar o ChatClient (LLM) para analisar e decidir
-        // 4. Mapear a resposta do LLM para o record FraudAnalysis
-        return new FraudAnalysis(false, "Not implemented yet", 0.0);
+        // 1. Chamar busca vetorial para encontrar contexto (RAG)
+        List<String> similarTransactions = vectorSearchService.findSimilarSuspiciousTransactions(transaction);
+        
+        // 2. Construir o Prompt System
+        String systemPrompt = """
+            Você é um agente sênior de detecção de fraudes financeiras.
+            Analise a transação fornecida e decida se é fraudulenta.
+            Leve em consideração o histórico de transações similares suspeitas (RAG).
+            Sempre responda em português.
+            """;
+            
+        // 3. Construir o Prompt User
+        String userPrompt = String.format("""
+            Transação Atual:
+            %s
+            
+            Transações Históricas Similares (Contexto RAG):
+            %s
+            """, transaction.toString(), String.join("\n", similarTransactions));
+
+        // 4. Chamar o ChatClient (LLM) e mapear diretamente para o record FraudAnalysis
+        return chatClient.prompt()
+            .system(systemPrompt)
+            .user(userPrompt)
+            .call()
+            .entity(FraudAnalysis.class);
     }
 }
