@@ -50,20 +50,20 @@ public class FraudDetectionAgent implements FraudAnalyzer {
 
 
         // =======================================================
-        // ETAPA 3: MULTIMODALIDADE (Visão Computacional)
-        // TODO: Extrai a imagem do recibo do MinIO (S3) para análise visual.
+        // ETAPA 3: MULTIMODALIDADE (Visão e Áudio Computacional)
+        // TODO: Extrai a imagem do recibo e o áudio de autorização do MinIO (S3)
         // =======================================================
 
 
         // =======================================================
         // ETAPA 4: ENGENHARIA DE PROMPT
-        // TODO: Prepara as instruções combinando RAG e Dados da Transação.
+        // TODO: Prepara as instruções combinando RAG e Dados da Transação. Adicionar menção de áudio.
         // =======================================================
 
 
         // =======================================================
         // ETAPA 5: CHAMADA AO LLM (Gemini 1.5 Flash)
-        // TODO: Envia o texto + imagem + regras de negócio (Spring AI).
+        // TODO: Envia o texto + imagem + áudio + regras de negócio (Spring AI).
         // =======================================================
 
 
@@ -93,6 +93,13 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         } else {
             return minioService.getImageBytes(imageStr);
         }
+    }
+
+    private byte[] extractVoiceAuth(Transaction transaction) {
+        if (transaction.voiceAuth() == null || transaction.voiceAuth().isBlank()) {
+            return null;
+        }
+        return minioService.getImageBytes(transaction.voiceAuth());
     }
 
     private void startLangfuseTrace(String traceId, Transaction transaction) {

@@ -26,12 +26,13 @@ startLangfuseTrace(traceId, transaction);
 
 ---
 
-### ETAPA 3: MULTIMODALIDADE (Visão Computacional)
-A transação possui um cupom fiscal/recibo? Se sim, vamos baixá-lo do nosso S3 (MinIO) ou decodificá-lo em Base64 para enviar aos "olhos" da IA.
+### ETAPA 3: MULTIMODALIDADE (Visão e Áudio Computacional)
+A transação possui um cupom fiscal/recibo ou áudio de autorização de voz? Se sim, vamos baixá-lo do nosso S3 (MinIO) para enviar aos "sentidos" da IA.
 
 **Substitua o TODO da Etapa 3 por:**
 ```java
 byte[] imageBytes = extractReceiptImage(transaction);
+byte[] audioBytes = extractVoiceAuth(transaction);
 ```
 
 ---
@@ -44,7 +45,9 @@ Aqui nós programamos a IA usando a linguagem humana. Vamos definir as regras de
 String systemPrompt = """
     Você é um agente sênior de detecção de fraudes financeiras.
     Analise a transação fornecida e decida se é fraudulenta.
-    Leve em consideração o histórico de transações similares (RAG) e a imagem do comprovante.
+    Leve em consideração o histórico de transações similares (RAG).
+    Se houver imagem, avalie a veracidade do comprovante fiscal.
+    Se houver áudio, ele contém a autorização por voz do cliente. Transcreva-o mentalmente e verifique se o tom e o que é falado condizem com a transação ou se parece um golpista com muita pressa.
     Sempre responda em português.
     """;
     
@@ -73,6 +76,9 @@ FraudAnalysis analysis = chatClient.prompt()
         u.text(userPrompt);
         if (imageBytes != null) {
             u.media(new Media(MimeTypeUtils.IMAGE_JPEG, new org.springframework.core.io.ByteArrayResource(imageBytes)));
+        }
+        if (audioBytes != null) {
+            u.media(new Media(MimeTypeUtils.parseMimeType("audio/mpeg"), new org.springframework.core.io.ByteArrayResource(audioBytes)));
         }
     })
     .call()

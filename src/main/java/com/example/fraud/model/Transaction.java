@@ -13,6 +13,7 @@ public record Transaction(
         String deviceId,
         String ipAddress,
         String transactionTime,
-        String receiptImage
+        String receiptImage,
+        String voiceAuth
 ) {
 }
