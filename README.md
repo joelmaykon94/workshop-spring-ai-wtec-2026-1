@@ -60,15 +60,11 @@ Assim que o Codespace abrir, o Docker Compose subirá em segundo plano a infraes
 ## 📝 O Desafio Hands-on
 
 A branch `main` contém a estrutura do projeto (`Controllers`, `Services`, `Models`) pronta, mas o Cérebro do Agente está vazio!
-Seu objetivo durante o minicurso é abrir a classe **`FraudDetectionAgent.java`** e implementar os `TODO`s:
+Seu objetivo durante o minicurso é abrir a classe **`FraudDetectionAgent.java`** e implementar a inteligência dela.
 
-1. **RAG:** Implementar a busca semântica em VectorSearchService.
-2. **Observabilidade:** Iniciar o trace da requisição no Langfuse.
-3. **Visão Computacional:** Preparar a imagem recebida do bucket S3.
-4. **Engenharia de Prompt:** Montar as intruções para o Agente.
-5. **Integração LLM:** Chamar a API do Gemini via Spring AI `ChatClient`.
+👉 **[CLIQUE AQUI PARA ABRIR O GUIA PASSO A PASSO](PASSO_A_PASSO.md)** 👈
 
-Se ficar travado, consulte o código completo na branch **`solucao`**.
+Se ficar travado, você também pode consultar o código completo na branch **`solucao`**.
 
 ---
 
