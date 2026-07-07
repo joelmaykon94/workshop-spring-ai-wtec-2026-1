@@ -5,7 +5,6 @@ services:
     image: mcr.microsoft.com/devcontainers/base:ubuntu
     volumes:
       - ..:/workspace:cached
-    network_mode: bridge
     # keep service alive
     command: sleep infinity
 
