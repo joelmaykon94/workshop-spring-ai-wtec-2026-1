@@ -35,8 +35,8 @@ public class SimulationController {
     @PostMapping("/simulate")
     public String runSimulation() {
         executor.submit(() -> {
-            System.out.println("\n==================================================");
-            System.out.println("🚀 INICIANDO SIMULAÇÃO DE TRÁFEGO EM TEMPO REAL...");
+            System.out.println("==================================================");
+            System.out.println("[INFO] INICIANDO SIMULAÇÃO DE TRÁFEGO EM TEMPO REAL...");
             System.out.println("==================================================");
 
             List<Map<String, Object>> scenarios = List.of(
@@ -56,7 +56,7 @@ public class SimulationController {
                 try {
                     Map<String, Object> s = scenarios.get(i);
                     String imgName = "sim_receipt_" + i + ".png";
-                    System.out.println("\n⏳ [" + (i+1) + "/10] Processando transação ID: " + s.get("id"));
+                    System.out.println("\n[WAITING] [" + (i+1) + "/10] Processando transação ID: " + s.get("id"));
 
                     // Baixa a imagem dinamicamente baseada no texto do recibo e joga no MinIO
                     String text = URLEncoder.encode((String) s.get("imgText"), StandardCharsets.UTF_8);
@@ -83,10 +83,10 @@ public class SimulationController {
                     // Invoca a camada de Service (Padrão MVC Correto)
                     if ("seed".equals(s.get("type"))) {
                         fraudService.seedTransaction(tx);
-                        System.out.println("✅ " + s.get("id") + " -> RAG Seed registrado com sucesso na base de conhecimento.");
+                        System.out.println("[SUCCESS] " + s.get("id") + " -> RAG Seed registrado com sucesso na base de conhecimento.");
                     } else {
                         FraudAnalysis result = fraudService.processTransaction(tx);
-                        System.out.println("🤖 " + s.get("id") + " -> IA Julgou: " + (result.isFraud() ? "🚨 FRAUDE DETECTADA!" : "✅ LEGÍTIMO"));
+                        System.out.println("[ANALYSIS] " + s.get("id") + " -> IA Julgou: " + (result.isFraud() ? "[FRAUD DETECTED]" : "[LEGITIMATE]"));
                         System.out.println("Motivo: " + result.reason());
                     }
 
@@ -106,7 +106,7 @@ public class SimulationController {
             }
             
             System.out.println("\n==================================================");
-            System.out.println("🎉 SIMULAÇÃO CONCLUÍDA!");
+            System.out.println("[INFO] SIMULAÇÃO CONCLUÍDA!");
             System.out.println("Abra o Langfuse em http://localhost:3000 para conferir o pico de requisições, custos e latências gerados!");
             System.out.println("==================================================");
         });
