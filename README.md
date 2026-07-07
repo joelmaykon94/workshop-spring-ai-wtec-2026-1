@@ -1,60 +1,92 @@
-# Workshop Spring AI - WTEC 2026 (Gabarito Oficial 🟢)
+# Workshop Spring AI - WTEC 2026
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/joelmaykon94/workshop-spring-ai-wtec-2026-1)
 
-> **⚠️ AVISO:** Você está na branch **`solucao`**. Esta branch contém a implementação completa, refatorada e arquiteturalmente finalizada do projeto. Para o template inicial do minicurso, mude para a branch `main`.
-
 Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para Detecção de Fraudes usando Spring AI.
 
-## 🏛️ Arquitetura da Solução
+## 🚀 Como Iniciar a Prática (Passo a Passo)
 
-Neste projeto nós construímos uma orquestração reativa onde um Agente de Inteligência Artificial atua como Auditor de Fraudes para transações financeiras.
+### Passo 1: Fazer Fork do Repositório (Obrigatório)
+1. Estando nesta página, clique no botão **Fork** no canto superior direito do GitHub.
+2. Isso criará uma cópia idêntica deste projeto em sua conta pessoal do GitHub.
 
-*   **Padrão MVC + Services:** Controladores limpos e lógicas de orquestração encapsuladas na camada de `Service` (`FraudService.java`).
-*   **Multimodalidade (Spring AI + Gemini 1.5 Flash):** Análise combinada de dados estruturados em JSON e fotos de cupons fiscais baixadas dinamicamente via bucket S3.
-*   **Vector Database (PGVector):** Utilização do padrão **RAG** (Retrieval-Augmented Generation) para buscar o histórico de fraudes anteriores do usuário e prover contexto extra ao LLM.
-*   **SAGA Pattern (Kafka):** Quando o Agente de IA detecta que uma transação é fraude, o sistema dispara um evento em um tópico Kafka (`fraud-compensations`) instruindo serviços parceiros (ex: Ledger Bancário) a realizar o Rollback (Estorno) do valor imediatamente.
-*   **Observabilidade (Langfuse):** Traçabilidade de todo o fluxo (Traces), latência por etapa (Spans) e log completo de tokens consumidos pelas gerações LLM (Generations) em tempo real.
+### Passo 2: Clonar na sua Máquina Local
+1. No seu repositório bifurcado (Fork), clique no botão verde **<> Code** e copie a URL (HTTPS ou SSH).
+2. Abra o terminal na sua máquina local e rode:
+   ```bash
+   git clone <SUA_URL_AQUI>
+   cd workshop-spring-ai
+   ```
+
+### Passo 3: Inicializar a Infraestrutura Base (Docker)
+Este projeto possui um `docker-compose.yml` pré-configurado com tudo que precisamos.
+Abra o terminal na pasta do projeto e execute:
+```bash
+docker compose up -d
+```-
+
+## 🛠️ Orquestração Automática e Infraestrutura
+
+Assim que você rodar o Docker Compose, ele subirá em segundo plano a infraestrutura base:
+- **PostgreSQL** com a extensão `pgvector` (Para RAG).
+- **MinIO** (Armazenamento S3 para recibos).
+- **Kafka** (Mensageria assíncrona para orquestração da Saga).
+- **Langfuse** (Painel web para observabilidade da IA).
+
+1. **Dashboards Web:**
+   Como os containers estão rodando na sua máquina local, acesse direto pelo navegador:
+   *   **Langfuse (http://localhost:3000):** Painel de Observabilidade. Crie uma conta e gere suas chaves em Settings > API Keys.
+   *   **MinIO (http://localhost:9001):** Nosso S3 local. Login: `minioadmin / minioadmin`.
 
 ---
 
-## 🚀 Como Executar o Gabarito (Codespaces)
+## ⚙️ Configurando o Projeto
 
-O ambiente no GitHub Codespaces subirá **automaticamente** os serviços base no Docker Compose (PostgreSQL, Kafka, MinIO e Langfuse).
-
-1. **Dashboards Web (Aba Ports):**
-   *   **Langfuse (Porta 3000):** Painel de Observabilidade. Crie uma conta e gere suas chaves em Settings > API Keys.
-   *   **MinIO (Porta 9001):** Nosso S3 local. Login: `minioadmin / minioadmin`.
-
-2. **Configurando as Chaves (.env):**
-   Renomeie `.env.example` para `.env` e preencha:
+1. **Variáveis de Ambiente:**
+   Renomeie o arquivo `.env.example` para `.env` na raiz do projeto:
    ```bash
    cp .env.example .env
    ```
-   *As chaves necessárias são `OPENAI_API_KEY` (Gemini via Google AI Studio) e as chaves do Langfuse.*
 
-3. **Iniciando a Aplicação Spring Boot:**
+2. **Chaves de API:**
+   Abra o arquivo `.env` e preencha as chaves:
+   - `OPENAI_API_KEY`: Crie uma chave grátis no [Google AI Studio](https://aistudio.google.com/app/apikey).
+   - `LANGFUSE_PUBLIC_KEY` e `LANGFUSE_SECRET_KEY`: Pegue no painel do Langfuse criado no passo anterior.
+
+3. **Iniciando a Aplicação (Com Live Reload 🔄):**
+   Execute a aplicação Spring Boot pelo terminal ou sua IDE favorita (IntelliJ, VS Code):
    ```bash
    ./mvnw spring-boot:run
    ```
+   *Dica: O projeto está configurado com o **Spring Boot DevTools**. Isso significa que enquanto você estiver alterando a classe `FraudDetectionAgent.java` durante o curso, basta salvar o arquivo (e disparar a compilação na IDE) que a aplicação reiniciará automaticamente em 1-2 segundos e refletirá as mudanças para testarmos!*
 
 ---
 
-## 🧪 Testando a Orquestração Completa
+## 📝 O Desafio Hands-on
 
-Com o sistema rodando, você pode iniciar o nosso "Canhão de Transações". Preparamos um Endpoint que simula a chegada em tempo real de **10 transações bancárias variadas** (algumas legais, outras super fraudulentas).
+A branch `main` contém a estrutura do projeto (`Controllers`, `Services`, `Models`) pronta, mas o Cérebro do Agente está vazio!
+Seu objetivo durante o minicurso é abrir a classe **`FraudDetectionAgent.java`** e implementar a inteligência dela.
 
-Abra outro terminal e execute:
+👉 **[CLIQUE AQUI PARA ABRIR O GUIA PASSO A PASSO](PASSO_A_PASSO.md)** 👈
+
+Se ficar travado, você também pode consultar o código completo na branch **`solucao`**.
+
+---
+
+## 🧪 Simulando o Tráfego em Tempo Real
+
+Após implementar seu Agente de IA, você pode testá-lo enviando rajadas de transações! Preparamos um Endpoint que cria 10 transações falsas, gera e faz upload automático de imagens de recibos, e envia para a IA julgar uma a uma.
+
+Com a aplicação rodando, abra outro terminal e execute:
 ```bash
 curl -X POST http://localhost:8080/api/fraud/simulate
 ```
+*Acompanhe no console do Spring Boot e no dashboard do Langfuse as análises sendo realizadas!*
 
-**O que vai acontecer debaixo dos panos?**
-1. O controlador de simulação gerará dados na mosca e fará o download de recibos customizados via API do Placehold, subindo eles no **MinIO**.
-2. Ele vai fazer o **Seed (Alimentação do RAG)** com as transações 1 e 2 no PGVector.
-3. Nas transações de 3 a 10, ele acionará o `FraudDetectionAgent`.
-4. O Agente executará: RAG -> Recuperação Multimodal -> Engenharia de Prompt -> Chamada ao Gemini -> Registro no Langfuse.
-5. Se for Fraude, ele aciona o Apache Kafka para emitir o estorno da SAGA.
-6. Há um *Rate Limiting Control* de 15 segundos entre requisições implementado na simulação para respeitar com folga a cota do plano gratuito do Gemini (15 RPM).
+---
 
-*Volte ao painel do **Langfuse** para ver a mágica acontecendo em lindos gráficos!*
+## 📚 Referências e Documentações
+
+*   **Spring AI:** [Visão Geral](https://spring.io/projects/spring-ai#overview) | [API do ChatClient](https://docs.spring.io/spring-ai/reference/api/chatclient.html)
+*   **Google AI Studio:** [Gemini API](https://aistudio.google.com/)
+*   **Observabilidade:** [Langfuse Docs](https://langfuse.com/docs)
