@@ -1,4 +1,8 @@
-package com.example.fraud;
+package com.example.fraud.model;
+import com.example.fraud.model.*;
+import com.example.fraud.service.*;
+import com.example.fraud.config.*;
+
 
 public record Transaction(
         String id,
@@ -8,6 +12,7 @@ public record Transaction(
         String location,
         String deviceId,
         String ipAddress,
-        String transactionTime
+        String transactionTime,
+        String receiptImage
 ) {
 }

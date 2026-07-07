@@ -41,16 +41,34 @@ No VS Code do Codespaces, clique na aba **Ports** (Portas) na parte inferior. Ce
 
 ## 🧪 Testando a API (cURL)
 
-Para testar a aplicação no terminal (após subir o Spring Boot), você pode usar o arquivo `test-payload.json` que preparamos para você. Ele já contém uma imagem Base64 (`recibo.png`) e um Áudio fictício (`voz.wav`).
+Para facilitar os testes práticos durante o workshop, preparamos uma pasta `test-data/` contendo diferentes cenários de transações e comprovantes reais (anonimizados).
 
-**1. Semeando uma Transação (PGVector RAG):**
+### Setup do MinIO (Obrigatório)
+Antes de rodar os testes, é necessário enviar as imagens para o bucket `fraud-images` no MinIO (para simular um upload de um app). Execute os comandos abaixo em um terminal:
 ```bash
-curl -X POST -H "Content-Type: application/json" -d @test-payload.json http://localhost:8080/api/fraud/seed
+docker cp test-data/itau_uni.png fraud-minio:/tmp/
+docker exec fraud-minio mc cp /tmp/itau_uni.png myminio/fraud-images/itau_uni.png
+
+docker cp test-data/receipt_b_dot.png fraud-minio:/tmp/
+docker exec fraud-minio mc cp /tmp/receipt_b_dot.png myminio/fraud-images/receipt_b_dot.png
 ```
 
-**2. Analisando uma Transação (IA + Vision):**
+### 1. Cenário: Transação Legítima
+Testa uma transação normal, referenciando o comprovante `itau_uni.png`. O Agente IA deve deduzir que não é fraude.
 ```bash
-curl -X POST -H "Content-Type: application/json" -d @test-payload.json http://localhost:8080/api/fraud/analyze
+curl -X POST -H "Content-Type: application/json" -d @test-data/payload-itau-legitimo.json http://localhost:8080/api/fraud/analyze
+```
+
+### 2. Cenário: Transação Fraudulenta
+Testa uma transação suspeita, referenciando o `receipt_b_dot.png`. O Agente IA deve bloquear (isFraud: true) e acionar a Saga de Compensação.
+```bash
+curl -X POST -H "Content-Type: application/json" -d @test-data/payload-receipt-falso.json http://localhost:8080/api/fraud/analyze
+```
+
+### 3. Semeando Dados no RAG (Vector Store)
+Para popular o histórico de conhecimento da aplicação com uma transação:
+```bash
+curl -X POST -H "Content-Type: application/json" -d @test-data/test-payload.json http://localhost:8080/api/fraud/seed
 ```
 
 ---
