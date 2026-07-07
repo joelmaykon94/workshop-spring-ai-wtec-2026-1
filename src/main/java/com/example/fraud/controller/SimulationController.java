@@ -21,13 +21,13 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api/fraud")
 public class SimulationController {
 
-    private final FraudController fraudController;
+    private final FraudService fraudService;
     private final MinioService minioService;
     private final RestTemplate restTemplate;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public SimulationController(FraudController fraudController, MinioService minioService) {
-        this.fraudController = fraudController;
+    public SimulationController(FraudService fraudService, MinioService minioService) {
+        this.fraudService = fraudService;
         this.minioService = minioService;
         this.restTemplate = new RestTemplate();
     }
@@ -80,12 +80,12 @@ public class SimulationController {
                             imgName
                     );
 
-                    // Invoca o método do FraudController (reaproveitando a lógica Java já existente)
+                    // Invoca a camada de Service (Padrão MVC Correto)
                     if ("seed".equals(s.get("type"))) {
-                        fraudController.seedSuspiciousTransaction(tx);
+                        fraudService.seedTransaction(tx);
                         System.out.println("✅ " + s.get("id") + " -> RAG Seed registrado com sucesso na base de conhecimento.");
                     } else {
-                        FraudAnalysis result = fraudController.analyzeTransaction(tx);
+                        FraudAnalysis result = fraudService.processTransaction(tx);
                         System.out.println("🤖 " + s.get("id") + " -> IA Julgou: " + (result.isFraud() ? "🚨 FRAUDE DETECTADA!" : "✅ LEGÍTIMO"));
                         System.out.println("Motivo: " + result.reason());
                     }

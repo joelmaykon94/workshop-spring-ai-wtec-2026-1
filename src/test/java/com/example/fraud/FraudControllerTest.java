@@ -18,7 +18,8 @@ class FraudControllerTest {
         StubTransactionSagaService sagaService = new StubTransactionSagaService();
         StubVectorSearchService vectorService = new StubVectorSearchService();
         
-        FraudController controller = new FraudController(agent, vectorService, sagaService);
+        FraudService fraudService = new FraudService(agent, vectorService, sagaService);
+        FraudController controller = new FraudController(fraudService);
 
         // Act
         FraudAnalysis result = controller.analyzeTransaction(tx);
@@ -39,7 +40,8 @@ class FraudControllerTest {
         StubTransactionSagaService sagaService = new StubTransactionSagaService();
         StubVectorSearchService vectorService = new StubVectorSearchService();
         
-        FraudController controller = new FraudController(agent, vectorService, sagaService);
+        FraudService fraudService = new FraudService(agent, vectorService, sagaService);
+        FraudController controller = new FraudController(fraudService);
 
         // Act
         FraudAnalysis result = controller.analyzeTransaction(tx);
@@ -58,7 +60,8 @@ class FraudControllerTest {
         Transaction tx = new Transaction("tx-3", "user-3", 500.0, "Loja Falsa", "SP", "dev-3", "10.0.0.1", "2026-07-07T12:00:00Z", null);
         
         StubVectorSearchService vectorService = new StubVectorSearchService();
-        FraudController controller = new FraudController(null, vectorService, null);
+        FraudService fraudService = new FraudService(null, vectorService, null);
+        FraudController controller = new FraudController(fraudService);
 
         // Act
         String result = controller.seedSuspiciousTransaction(tx);
