@@ -17,10 +17,21 @@ Este projeto foi otimizado para rodar diretamente no GitHub Codespaces. Ao inici
 2. **Configurando a API da IA (Google Gemini 1.5 Flash):**
    Para não sobrecarregar o Codespaces com modelos locais, o projeto está configurado para usar a API gratuita do Google Gemini.
    - Crie uma chave de API grátis no [Google AI Studio](https://aistudio.google.com/app/apikey).
-   - No terminal, inicie o Spring Boot passando sua chave:
+   
+3. **Pegando as chaves do Langfuse:**
+   - Acesse o painel do Langfuse (Porta `3000` na aba Ports).
+   - Crie um projeto, vá em **Settings** > **API Keys** e crie novas chaves (Public e Secret Key).
+
+4. **Rodando o Projeto (Terminal):**
+   Execute o comando abaixo substituindo as chaves pelas suas:
    ```bash
-   OPENAI_API_KEY="sua_chave_do_google_aqui" ./mvnw spring-boot:run
+   OPENAI_API_KEY="sua_chave_do_google" \
+   LANGFUSE_PUBLIC_KEY="pk-lf-..." \
+   LANGFUSE_SECRET_KEY="sk-lf-..." \
+   ./mvnw spring-boot:run
    ```
+
+*(O projeto já está configurado para apontar automaticamente para o `localhost` para conectar ao Postgres, Kafka e MinIO de forma transparente!)*
 
 ## 📊 Dashboards Web (Aba Ports)
 
