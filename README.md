@@ -6,19 +6,21 @@ Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para 
 
 ## 🚀 Ambiente (Codespaces)
 
-Este projeto foi otimizado para rodar diretamente no GitHub Codespaces. Ao iniciar o seu Codespace, o Docker Compose subirá **automaticamente** todos os serviços (PostgreSQL, Kafka, MinIO, Langfuse e Ollama).
+Este projeto foi otimizado para rodar diretamente no GitHub Codespaces. Ao iniciar o seu Codespace, o Docker Compose subirá **automaticamente** os serviços de banco e mensageria (PostgreSQL, Kafka, MinIO e Langfuse).
 
 1. **Como verificar se os containers subiram:**
    Abra o terminal do Codespaces e execute:
    ```bash
    docker ps
    ```
-2. **Como acompanhar o download da IA (Ollama):**
-   O modelo Llama 3.2 Vision tem mais de 3GB. Para ver o progresso do download automático, rode:
+
+2. **Configurando a API da IA (Google Gemini 1.5 Flash):**
+   Para não sobrecarregar o Codespaces com modelos locais, o projeto está configurado para usar a API gratuita do Google Gemini.
+   - Crie uma chave de API grátis no [Google AI Studio](https://aistudio.google.com/app/apikey).
+   - No terminal, inicie o Spring Boot passando sua chave:
    ```bash
-   docker logs -f fraud-ollama
+   OPENAI_API_KEY="sua_chave_do_google_aqui" ./mvnw spring-boot:run
    ```
-   *(Pressione `Ctrl+C` para sair dos logs).*
 
 ## 📊 Dashboards Web (Aba Ports)
 
