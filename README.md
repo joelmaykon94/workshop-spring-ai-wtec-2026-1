@@ -10,30 +10,33 @@ Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para 
 1. Estando nesta página, clique no botão **Fork** no canto superior direito do GitHub.
 2. Isso criará uma cópia idêntica deste projeto em sua conta pessoal do GitHub.
 
-### Passo 2: Inicializar o Ambiente em Nuvem
-1. No seu repositório bifurcado, clique no botão verde **<> Code**.
-2. Selecione a aba **Codespaces** e clique em **Create codespace on main**.
+### Passo 2: Clonar na sua Máquina Local
+1. No seu repositório bifurcado (Fork), clique no botão verde **<> Code** e copie a URL (HTTPS ou SSH).
+2. Abra o terminal na sua máquina local e rode:
+   ```bash
+   git clone <SUA_URL_AQUI>
+   cd workshop-spring-ai
+   ```
 
----
+### Passo 3: Inicializar a Infraestrutura Base (Docker)
+Este projeto possui um `docker-compose.yml` pré-configurado com tudo que precisamos.
+Abra o terminal na pasta do projeto e execute:
+```bash
+docker compose up -d
+```-
 
 ## 🛠️ Orquestração Automática e Infraestrutura
 
-Assim que o Codespace abrir, o Docker Compose subirá em segundo plano a infraestrutura base:
+Assim que você rodar o Docker Compose, ele subirá em segundo plano a infraestrutura base:
 - **PostgreSQL** com a extensão `pgvector` (Para RAG).
 - **MinIO** (Armazenamento S3 para recibos).
 - **Kafka** (Mensageria assíncrona para orquestração da Saga).
 - **Langfuse** (Painel web para observabilidade da IA).
 
-1. **Como verificar se os containers subiram:**
-   Abra o terminal do Codespaces e execute:
-   ```bash
-   docker ps
-   ```
-
-2. **Dashboards Web (Aba Ports):**
-   No VS Code, clique na aba **Ports** na parte inferior e altere a visibilidade para **Public**:
-   *   **Langfuse (Porta 3000):** Painel de Observabilidade. Crie uma conta e gere suas chaves em Settings > API Keys.
-   *   **MinIO (Porta 9001):** Nosso S3 local. Login: `minioadmin / minioadmin`.
+1. **Dashboards Web:**
+   Como os containers estão rodando na sua máquina local, acesse direto pelo navegador:
+   *   **Langfuse (http://localhost:3000):** Painel de Observabilidade. Crie uma conta e gere suas chaves em Settings > API Keys.
+   *   **MinIO (http://localhost:9001):** Nosso S3 local. Login: `minioadmin / minioadmin`.
 
 ---
 
@@ -50,10 +53,12 @@ Assim que o Codespace abrir, o Docker Compose subirá em segundo plano a infraes
    - `OPENAI_API_KEY`: Crie uma chave grátis no [Google AI Studio](https://aistudio.google.com/app/apikey).
    - `LANGFUSE_PUBLIC_KEY` e `LANGFUSE_SECRET_KEY`: Pegue no painel do Langfuse criado no passo anterior.
 
-3. **Iniciando a Aplicação:**
+3. **Iniciando a Aplicação (Com Live Reload 🔄):**
+   Execute a aplicação Spring Boot pelo terminal ou sua IDE favorita (IntelliJ, VS Code):
    ```bash
    ./mvnw spring-boot:run
    ```
+   *Dica: O projeto está configurado com o **Spring Boot DevTools**. Isso significa que enquanto você estiver alterando a classe `FraudDetectionAgent.java` durante o curso, basta salvar o arquivo (e disparar a compilação na IDE) que a aplicação reiniciará automaticamente em 1-2 segundos e refletirá as mudanças para testarmos!*
 
 ---
 
