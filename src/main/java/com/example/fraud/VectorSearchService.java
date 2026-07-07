@@ -40,4 +40,19 @@ public class VectorSearchService {
                 .map(Document::getText)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Adiciona uma transação conhecida como fraudulenta ao banco de dados vetorial.
+     * Isso alimentará a base de conhecimento do RAG para futuras detecções.
+     * @param transaction Transação fraudulenta.
+     */
+    public void addSuspiciousTransaction(Transaction transaction) {
+        String content = String.format(
+            "merchant: %s, location: %s, amount: %.2f",
+            transaction.merchant(), transaction.location(), transaction.amount()
+        );
+        
+        Document document = new Document(content);
+        vectorStore.add(List.of(document));
+    }
 }
