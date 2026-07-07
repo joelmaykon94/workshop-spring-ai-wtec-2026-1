@@ -8,6 +8,7 @@ public record Transaction(
         String location,
         String deviceId,
         String ipAddress,
-        String transactionTime
+        String transactionTime,
+        String receiptImage
 ) {
 }
