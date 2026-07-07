@@ -1,0 +1,29 @@
+{
+  "name": "Spring AI Workshop Dev Container",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "latest",
+      "enableNonRootDocker": "true",
+      "moby": "false"
+    },
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "installMaven": "true"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-spring-boot-tooling",
+        "ms-azuretools.vscode-docker",
+        "vscjava.vscode-spring-initializr",
+        "vscjava.vscode-lombok"
+      ]
+    }
+  },
+  "remoteUser": "vscode"
+}
