@@ -65,10 +65,18 @@ public class FraudDetectionAgent implements FraudAnalyzer {
             %s
             """, transaction.toString(), String.join("\n", similarTransactions));
 
-        // 4. Buscar imagem do MinIO (se houver comprovante na transação)
+        // 4. Buscar imagem do MinIO ou decodificar Base64 (se houver comprovante na transação)
         byte[] imageBytes = null;
         if (transaction.receiptImage() != null && !transaction.receiptImage().isBlank()) {
-            imageBytes = minioService.getImageBytes(transaction.receiptImage());
+            String imageStr = transaction.receiptImage();
+            if (imageStr.startsWith("data:image") || imageStr.length() > 255) {
+                // É uma string Base64
+                String base64Data = imageStr.contains(",") ? imageStr.split(",")[1] : imageStr;
+                imageBytes = java.util.Base64.getDecoder().decode(base64Data.trim());
+            } else {
+                // É um nome de arquivo no MinIO
+                imageBytes = minioService.getImageBytes(imageStr);
+            }
         }
 
         final byte[] finalImageBytes = imageBytes;
