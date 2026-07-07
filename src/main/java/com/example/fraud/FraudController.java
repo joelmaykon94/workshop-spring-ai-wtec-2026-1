@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/fraud")
 public class FraudController {
 
-    private final FraudDetectionAgent agent;
+    private final FraudAnalyzer agent;
     private final VectorSearchService vectorSearchService;
     private final TransactionSagaService sagaService;
 
-    public FraudController(FraudDetectionAgent agent, VectorSearchService vectorSearchService, TransactionSagaService sagaService) {
+    public FraudController(FraudAnalyzer agent, VectorSearchService vectorSearchService, TransactionSagaService sagaService) {
         this.agent = agent;
         this.vectorSearchService = vectorSearchService;
         this.sagaService = sagaService;

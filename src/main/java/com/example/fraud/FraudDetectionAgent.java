@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class FraudDetectionAgent {
+public class FraudDetectionAgent implements FraudAnalyzer {
 
     private final VectorSearchService vectorSearchService;
     private final ChatClient chatClient;
