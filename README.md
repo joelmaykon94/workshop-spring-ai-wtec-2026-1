@@ -18,15 +18,15 @@ Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para 
    cd workshop-spring-ai
    ```
 
-### Passo 3: Abrir no VS Code com Dev Containers (A Mágica)
-Não perca tempo instalando o Java 21 ou configurando variáveis na sua máquina física! Faremos isso via Container:
+### Passo 3: Inicializar o Ambiente via VS Code Dev Containers
+A configuração do ambiente de desenvolvimento é automatizada via Container, isolando as dependências do sistema host:
 1. Abra o **Visual Studio Code**.
-2. Vá em `Extensions` (Extensões) e instale a extensão oficial da Microsoft chamada **"Dev Containers"**.
+2. Vá em `Extensions` e instale a extensão oficial da Microsoft chamada **"Dev Containers"**.
 3. No VS Code, clique em `File > Open Folder...` e abra a pasta do projeto `workshop-spring-ai`.
 4. Um aviso aparecerá no canto inferior direito: *"Folder contains a Dev Container configuration file"*. Clique no botão **Reopen in Container**.
-   *(Se o aviso não aparecer, pressione `Ctrl+Shift+P` ou `Cmd+Shift+P`, digite **Dev Containers: Rebuild and Reopen in Container**).*
+   *(Caso a notificação não seja exibida, pressione `Ctrl+Shift+P` ou `Cmd+Shift+P`, pesquise e execute: **Dev Containers: Rebuild and Reopen in Container**).*
 
-O VS Code baixará o Java 21, as extensões do Spring e subirá os containers do banco de dados e mensageria automaticamente. Sua máquina continuará limpa!-
+O VS Code provisionará o Java 21, as extensões necessárias para o ecossistema Spring e a infraestrutura de containers (banco de dados, filas e painéis) de forma automatizada e isolada.-
 
 ## 🛠️ Orquestração Automática e Infraestrutura
 
@@ -61,7 +61,7 @@ Assim que o container iniciar, o Docker Compose já terá subido em segundo plan
    ```bash
    ./mvnw spring-boot:run
    ```
-   *Dica: O projeto está configurado com o **Spring Boot DevTools**. Isso significa que enquanto você estiver alterando a classe `FraudDetectionAgent.java` durante o curso, basta salvar o arquivo (e disparar a compilação na IDE) que a aplicação reiniciará automaticamente em 1-2 segundos e refletirá as mudanças para testarmos!*
+   *Nota: O projeto utiliza o **Spring Boot DevTools**. Ao alterar o código da classe `FraudDetectionAgent.java`, basta salvar o arquivo (e acionar a compilação na IDE) para que o contexto da aplicação seja recarregado automaticamente, refletindo as alterações instantaneamente.*
 
 ---
 
