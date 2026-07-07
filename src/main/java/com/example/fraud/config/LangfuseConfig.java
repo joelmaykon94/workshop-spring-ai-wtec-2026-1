@@ -1,4 +1,8 @@
-package com.example.fraud;
+package com.example.fraud.config;
+import com.example.fraud.model.*;
+import com.example.fraud.service.*;
+import com.example.fraud.config.*;
+
 
 import com.langfuse.client.LangfuseClient;
 import org.springframework.beans.factory.annotation.Value;

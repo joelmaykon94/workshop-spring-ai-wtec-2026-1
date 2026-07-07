@@ -1,5 +1,9 @@
 package com.example.fraud;
 
+import com.example.fraud.model.*;
+import com.example.fraud.service.*;
+import com.example.fraud.controller.*;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

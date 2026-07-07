@@ -1,4 +1,8 @@
-package com.example.fraud;
+package com.example.fraud.service;
+import com.example.fraud.model.*;
+import com.example.fraud.service.*;
+import com.example.fraud.config.*;
+
 
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;

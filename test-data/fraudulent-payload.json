@@ -1,0 +1,10 @@
+{
+  "id": "tx-fraud-002",
+  "userId": "user-123",
+  "amount": 125000.00,
+  "merchant": "Crypto Exchange XYZ",
+  "location": "Moscou, Rússia",
+  "deviceId": "dev-unknown-999",
+  "ipAddress": "45.22.1.99",
+  "transactionTime": "2026-07-07T03:00:00Z"
+}

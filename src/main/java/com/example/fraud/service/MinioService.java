@@ -1,11 +1,17 @@
-package com.example.fraud;
+package com.example.fraud.service;
+import com.example.fraud.model.*;
+import com.example.fraud.service.*;
+import com.example.fraud.config.*;
+
 
 import io.minio.GetObjectArgs;
+import io.minio.PutObjectArgs;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 
 @Service
 public class MinioService {
@@ -43,6 +49,20 @@ public class MinioService {
             // Em produção deve haver um log e tratamento de erro melhor
             System.err.println("Erro ao baixar imagem do MinIO: " + e.getMessage());
             return null;
+        }
+    }
+
+    public void uploadImage(String objectName, byte[] content, String contentType) {
+        try {
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .stream(new ByteArrayInputStream(content), content.length, -1)
+                            .contentType(contentType)
+                            .build());
+        } catch (Exception e) {
+            System.err.println("Erro ao fazer upload para o MinIO: " + e.getMessage());
         }
     }
 }
