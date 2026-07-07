@@ -16,7 +16,7 @@ List<String> similarTransactions = vectorSearchService.findSimilarSuspiciousTran
 ---
 
 ### ETAPA 2: OBSERVABILIDADE (Início)
-Para não ficarmos "no escuro" sobre o que o LLM está fazendo, vamos iniciar o rastreamento (Trace) no Langfuse.
+Para habilitar o monitoramento e rastreamento da decisão do LLM, iniciamos a instrumentação via Langfuse.
 
 **Substitua o TODO da Etapa 2 por:**
 ```java
@@ -27,7 +27,7 @@ startLangfuseTrace(traceId, transaction);
 ---
 
 ### ETAPA 3: MULTIMODALIDADE (Visão e Áudio Computacional)
-A transação possui um cupom fiscal/recibo ou áudio de autorização de voz? Se sim, vamos baixá-lo do nosso S3 (MinIO) para enviar aos "sentidos" da IA.
+Caso a transação possua artefatos como um cupom fiscal/recibo ou autorização por voz, extraímos os dados do Storage S3 (MinIO) para processamento multimodal.
 
 **Substitua o TODO da Etapa 3 por:**
 ```java
@@ -38,7 +38,7 @@ byte[] audioBytes = extractVoiceAuth(transaction);
 ---
 
 ### ETAPA 4: ENGENHARIA DE PROMPT
-Aqui nós programamos a IA usando a linguagem humana. Vamos definir as regras de negócio (`systemPrompt`) e injetar os dados da transação + o contexto RAG (`userPrompt`).
+Nesta etapa, definimos o prompt do sistema (System Prompt) com as diretrizes de análise de risco e injetamos os dados da transação integrados ao contexto vetorial (User Prompt).
 
 **Substitua o TODO da Etapa 4 por:**
 ```java
@@ -62,9 +62,9 @@ String userPrompt = String.format("""
 
 ---
 
-### ETAPA 5: CHAMADA AO LLM (Gemini 1.5 Flash)
-Agora é a hora do show! Usando o `ChatClient` do Spring AI, vamos enviar tudo isso para o modelo do Google Gemini.
-*A mágica acontece no `.entity(FraudAnalysis.class)`, onde o Spring AI força o LLM a devolver um JSON perfeito e já o converte para nossa classe Java!*
+### ETAPA 5: INTEGRAÇÃO LLM (Gemini 1.5 Flash)
+A comunicação com a API do Gemini é realizada através do `ChatClient` do ecossistema Spring AI. O processamento multimodal é injetado programaticamente.
+*O método `.entity(FraudAnalysis.class)` orquestra automaticamente o parser do JSON retornado pelo modelo para o Record Java instanciado.*
 
 **Substitua o TODO da Etapa 5 por:**
 ```java
@@ -90,7 +90,7 @@ OffsetDateTime endTime = OffsetDateTime.now();
 ---
 
 ### ETAPA 6: OBSERVABILIDADE (Fim)
-A IA respondeu. Vamos enviar a latência, o custo de tokens e a decisão tomada de volta para o Dashboard do Langfuse.
+A etapa de rastreabilidade é finalizada consolidando os dados de latência, consumo de tokens e a deliberação analítica final no dashboard do Langfuse.
 
 **Substitua o TODO da Etapa 6 por:**
 ```java
@@ -100,20 +100,20 @@ finishLangfuseTrace(traceId, systemPrompt, userPrompt, analysis, startTime, endT
 ---
 
 ### FINALIZANDO:
-Por fim, no final do método, apague o "mock" que estava lá e retorne a análise real gerada pelo Gemini:
+Conclua a implementação removendo a instrução estática de "mock" ao final do método e retornando a inferência gerada pelo Agente:
 
-**Apague:**
+**Remova:**
 ```java
 // TODO: Retornar a análise real feita pela IA.
 return new FraudAnalysis(false, "Agente de IA em construção! Implemente os TODOs durante o minicurso.", 0.0);
 ```
 
-**E substitua por:**
+**E adicione:**
 ```java
 return analysis;
 ```
 
 ---
 
-### 🎉 Parabéns!
-Seu Agente de Inteligência Artificial Multimodal está pronto! Volte ao `README.md` e veja a seção **"Simulando o Tráfego em Tempo Real"** para colocar seu agente à prova sob estresse!
+### Conclusão
+O Agente de Inteligência Artificial Multimodal foi implementado com sucesso. Retorne ao arquivo `README.md` e execute as requisições detalhadas na seção **"Simulando o Tráfego em Tempo Real"** para validar o processamento em massa.
