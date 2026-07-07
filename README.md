@@ -96,3 +96,21 @@ O repositório na branch `main` contém a estrutura de controllers e modelos pro
 3. Construir o fluxo multimodal de processamento de imagem de cupons e áudio no agente.
 
 Se precisar de ajuda ou ficar travado, consulte o código completo na branch **`solucao`** ou faça checkout nos passos sequenciais do workshop (`git checkout passo-1`, etc.).
+
+---
+
+## 📚 Referências e Documentações
+
+Para aprofundamento durante e após o workshop, consulte a documentação oficial das ferramentas que utilizamos:
+
+*   **Spring AI**
+    *   [Visão Geral do Spring AI](https://spring.io/projects/spring-ai#overview)
+    *   [API do ChatClient (Prompts e Chamadas)](https://docs.spring.io/spring-ai/reference/api/chatclient.html)
+    *   [Bancos de Dados Vetoriais (PGVector)](https://docs.spring.io/spring-ai/reference/api/vectordbs.html)
+    *   [Multimodalidade (Visão e Áudio)](https://docs.spring.io/spring-ai/reference/api/multimodality.html)
+*   **Inteligência Artificial**
+    *   [Google AI Studio (Gemini API)](https://aistudio.google.com/)
+*   **Infraestrutura e Observabilidade**
+    *   [Langfuse (LLM Observability)](https://langfuse.com/docs)
+    *   [Apache Kafka (Saga Pattern)](https://kafka.apache.org/documentation/)
+    *   [MinIO (Object Storage S3)](https://min.io/docs/minio/linux/index.html)
