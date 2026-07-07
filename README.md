@@ -77,20 +77,15 @@ Para garantir que você consiga codificar e salvar suas alterações sem problem
 
 ---
 
-## 🛠️ Orquestração Automática (Aguarde os Modelos)
+## 🛠️ Orquestração Automática
 
-Assim que o Codespace abrir no seu navegador, a configuração interna (`.devcontainer.json`) executará o Docker Compose em segundo plano automaticamente para subir:
-- **Ollama** (Servidor de IA Local).
-- **PostgreSQL** com a extensão `pgvector`.
-- **MinIO** (Armazenamento compatível com S3).
-- **Kafka** (Mensageria assíncrona).
+Assim que o Codespace abrir no seu navegador, a configuração interna (`.devcontainer.json`) executará o Docker Compose em segundo plano automaticamente para subir a infraestrutura base de dados e mensageria:
+- **PostgreSQL** com a extensão `pgvector` (Para RAG).
+- **MinIO** (Armazenamento S3 para recibos).
+- **Kafka** (Mensageria assíncrona para orquestração da Saga).
+- **Langfuse** (Painel web para observabilidade da Inteligência Artificial).
 
-### Como Acompanhar a Inicialização da IA:
-Abra o terminal do Codespace e execute o comando abaixo para verificar o download em background dos modelos (`llama3.2-vision` e `nomic-embed-text`):
-```bash
-docker logs -f fraud-ollama
-```
-Aguarde até visualizar a mensagem **"Modelos prontos!"** no terminal antes de iniciar a execução da aplicação Java.
+*(Nota: O servidor de IA Ollama foi removido da stack local para evitar sobrecarga de Memória RAM no Codespaces. A aplicação foi reconfigurada para rodar incrivelmente rápido e leve conectando-se a APIs de nuvem como Google Gemini via protocolo OpenAI.)*
 
 ---
 
