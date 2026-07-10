@@ -1,7 +1,5 @@
 # Workshop Spring AI - WTEC 2026
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/joelmaykon94/workshop-spring-ai-wtec-2026-1)
-
 Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para Detecção de Fraudes usando Spring AI.
 
 ## 🚀 Como Iniciar a Prática (Passo a Passo)
