@@ -1,6 +1,5 @@
 # Workshop Spring AI - WTEC 2026
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/joelmaykon94/workshop-spring-ai-wtec-2026-1)
 
 Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para Detecção de Fraudes usando Spring AI.
 
@@ -91,7 +90,6 @@ Para garantir que você consiga codificar e salvar suas alterações sem problem
 1. No seu repositório bifurcado (Fork), clique no botão verde **<> Code**.
 2. Selecione a aba **Codespaces** e clique em **Create codespace on main** (ou clique no badge abaixo no seu fork):
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/joelmaykon94/workshop-spring-ai-wtec-2026-1)
 
 ---
 
