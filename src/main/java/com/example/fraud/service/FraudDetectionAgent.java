@@ -39,42 +39,68 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         
         // =======================================================
         // ETAPA 1: RAG (Retrieval-Augmented Generation)
-        // TODO: Busca o contexto do usuário e padrões de fraude no Banco Vetorial.
+        // Busca o contexto do usuário e padrões de fraude no Banco Vetorial.
         // =======================================================
-
+        List<String> similarTransactions = vectorSearchService.findSimilarSuspiciousTransactions(transaction);
 
         // =======================================================
         // ETAPA 2: OBSERVABILIDADE (Início)
-        // TODO: Inicia o rastreamento da transação no Langfuse.
+        // Inicia o rastreamento da transação no Langfuse.
         // =======================================================
-
+        String traceId = UUID.randomUUID().toString();
+        startLangfuseTrace(traceId, transaction);
 
         // =======================================================
-        // ETAPA 3: MULTIMODALIDADE (Visão e Áudio Computacional)
-        // TODO: Extrai a imagem do recibo e o áudio de autorização do MinIO (S3)
+        // ETAPA 3: MULTIMODALIDADE (Visão Computacional)
+        // Extrai a imagem do recibo do MinIO (S3) para análise visual.
         // =======================================================
-
+        byte[] imageBytes = extractReceiptImage(transaction);
 
         // =======================================================
         // ETAPA 4: ENGENHARIA DE PROMPT
-        // TODO: Prepara as instruções combinando RAG e Dados da Transação. Adicionar menção de áudio.
+        // Prepara as instruções combinando RAG e Dados da Transação.
         // =======================================================
-
+        String systemPrompt = """
+            Você é um agente sênior de detecção de fraudes financeiras.
+            Analise a transação fornecida e decida se é fraudulenta.
+            Leve em consideração o histórico de transações similares (RAG) e a imagem do comprovante.
+            Sempre responda em português.
+            """;
+            
+        String userPrompt = String.format("""
+            Transação Atual:
+            %s
+            
+            Transações Históricas Similares (Contexto RAG):
+            %s
+            """, transaction.toString(), String.join("\n", similarTransactions));
 
         // =======================================================
         // ETAPA 5: CHAMADA AO LLM (Gemini 1.5 Flash)
-        // TODO: Envia o texto + imagem + áudio + regras de negócio (Spring AI).
+        // Envia o texto + imagem + regras de negócio (Spring AI).
         // =======================================================
-
+        OffsetDateTime startTime = OffsetDateTime.now();
+        
+        FraudAnalysis analysis = chatClient.prompt()
+            .system(systemPrompt)
+            .user(u -> {
+                u.text(userPrompt);
+                if (imageBytes != null) {
+                    u.media(new Media(MimeTypeUtils.IMAGE_JPEG, new org.springframework.core.io.ByteArrayResource(imageBytes)));
+                }
+            })
+            .call()
+            .entity(FraudAnalysis.class); // O Spring AI cuida de fazer o parser do JSON pro Java Record!
+            
+        OffsetDateTime endTime = OffsetDateTime.now();
 
         // =======================================================
         // ETAPA 6: OBSERVABILIDADE (Fim)
-        // TODO: Atualiza o trace no Langfuse com a resposta, tokens e latência.
+        // Atualiza o trace no Langfuse com a resposta, tokens e latência.
         // =======================================================
+        finishLangfuseTrace(traceId, systemPrompt, userPrompt, analysis, startTime, endTime);
 
-
-        // TODO: Retornar a análise real feita pela IA.
-        return new FraudAnalysis(false, "Agente de IA em construção! Implemente os TODOs durante o minicurso.", 0.0);
+        return analysis;
     }
 
 
@@ -93,13 +119,6 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         } else {
             return minioService.getImageBytes(imageStr);
         }
-    }
-
-    private byte[] extractVoiceAuth(Transaction transaction) {
-        if (transaction.voiceAuth() == null || transaction.voiceAuth().isBlank()) {
-            return null;
-        }
-        return minioService.getImageBytes(transaction.voiceAuth());
     }
 
     private void startLangfuseTrace(String traceId, Transaction transaction) {

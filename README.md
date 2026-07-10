@@ -1,94 +1,134 @@
 # Workshop Spring AI - WTEC 2026
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/joelmaykon94/workshop-spring-ai-wtec-2026-1)
 
 Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para Detecção de Fraudes usando Spring AI.
 
-## 🚀 Como Iniciar a Prática (Passo a Passo)
+## 🚀 Ambiente (Codespaces)
 
-### Passo 1: Fazer Fork do Repositório (Obrigatório)
-1. Estando nesta página, clique no botão **Fork** no canto superior direito do GitHub.
-2. Isso criará uma cópia idêntica deste projeto em sua conta pessoal do GitHub.
+Este projeto foi otimizado para rodar diretamente no GitHub Codespaces. Ao iniciar o seu Codespace, o Docker Compose subirá **automaticamente** os serviços de banco e mensageria (PostgreSQL, Kafka, MinIO e Langfuse).
 
-### Passo 2: Clonar na sua Máquina Local
-1. No seu repositório bifurcado (Fork), clique no botão verde **<> Code** e copie a URL (HTTPS ou SSH).
-2. Abra o terminal na sua máquina local e rode:
+1. **Como verificar se os containers subiram:**
+   Abra o terminal do Codespaces e execute:
    ```bash
-   git clone <SUA_URL_AQUI>
-   cd workshop-spring-ai
+   docker ps
    ```
 
-### Passo 3: Inicializar o Ambiente via VS Code Dev Containers
-A configuração do ambiente de desenvolvimento é automatizada via Container, isolando as dependências do sistema host:
-1. Abra o **Visual Studio Code**.
-2. Vá em `Extensions` e instale a extensão oficial da Microsoft chamada **"Dev Containers"**.
-3. No VS Code, clique em `File > Open Folder...` e abra a pasta do projeto `workshop-spring-ai`.
-4. Um aviso aparecerá no canto inferior direito: *"Folder contains a Dev Container configuration file"*. Clique no botão **Reopen in Container**.
-   *(Caso a notificação não seja exibida, pressione `Ctrl+Shift+P` ou `Cmd+Shift+P`, pesquise e execute: **Dev Containers: Rebuild and Reopen in Container**).*
+2. **Configurando a API da IA (Google Gemini 1.5 Flash):**
+   Para não sobrecarregar o Codespaces com modelos locais, o projeto está configurado para usar a API gratuita do Google Gemini.
+   - Crie uma chave de API grátis no [Google AI Studio](https://aistudio.google.com/app/apikey).
+   
+3. **Pegando as chaves do Langfuse:**
+   - Acesse o painel do Langfuse (Porta `3000` na aba Ports).
+   - Crie um projeto, vá em **Settings** > **API Keys** e crie novas chaves (Public e Secret Key).
 
-O VS Code provisionará o Java 21, as extensões necessárias para o ecossistema Spring e a infraestrutura de containers (banco de dados, filas e painéis) de forma automatizada e isolada.-
+4. **Rodando o Projeto (Terminal):**
+   Execute o comando abaixo substituindo as chaves pelas suas:
+   ```bash
+   OPENAI_API_KEY="sua_chave_do_google" \
+   LANGFUSE_PUBLIC_KEY="pk-lf-..." \
+   LANGFUSE_SECRET_KEY="sk-lf-..." \
+   ./mvnw spring-boot:run
+   ```
 
-## 🛠️ Orquestração Automática e Infraestrutura
+*(O projeto já está configurado para apontar automaticamente para o `localhost` para conectar ao Postgres, Kafka e MinIO de forma transparente!)*
 
-Assim que o container iniciar, o Docker Compose já terá subido em segundo plano a infraestrutura base:
-- **PostgreSQL** com a extensão `pgvector` (Para RAG).
-- **MinIO** (Armazenamento S3 para recibos).
-- **Kafka** (Mensageria assíncrona para orquestração da Saga).
-- **Langfuse** (Painel web para observabilidade da IA).
+## 📊 Dashboards Web (Aba Ports)
 
-1. **Dashboards Web:**
-   Como os containers estão rodando na sua máquina local, acesse direto pelo navegador:
-   *   **Langfuse (http://localhost:3000):** Painel de Observabilidade. Crie uma conta e gere suas chaves em Settings > API Keys.
-   *   **MinIO (http://localhost:9001):** Nosso S3 local. Login: `minioadmin / minioadmin`.
+No VS Code do Codespaces, clique na aba **Ports** (Portas) na parte inferior. Certifique-se de alterar a *Visibility* (Visibilidade) para **Public** (Pública) clicando com o botão direito na porta desejada:
+*   **Langfuse (Porta 3000):** Painel de Observabilidade dos Prompts da IA. Crie uma conta local e gere suas chaves em Settings > API Keys.
+*   **MinIO (Porta 9001):** Nosso "S3" local. Login: `minioadmin / minioadmin`.
+
+## 🧪 Testando a API (cURL)
+
+Para facilitar os testes práticos durante o workshop, preparamos uma pasta `test-data/` contendo diferentes cenários de transações e comprovantes reais (anonimizados).
+
+### Setup do MinIO (Obrigatório)
+Antes de rodar os testes, é necessário enviar as imagens para o bucket `fraud-images` no MinIO (para simular um upload de um app). Execute os comandos abaixo em um terminal:
+```bash
+docker cp test-data/itau_uni.png fraud-minio:/tmp/
+docker exec fraud-minio mc cp /tmp/itau_uni.png myminio/fraud-images/itau_uni.png
+
+docker cp test-data/receipt_b_dot.png fraud-minio:/tmp/
+docker exec fraud-minio mc cp /tmp/receipt_b_dot.png myminio/fraud-images/receipt_b_dot.png
+```
+
+### 1. Cenário: Transação Legítima
+Testa uma transação normal, referenciando o comprovante `itau_uni.png`. O Agente IA deve deduzir que não é fraude.
+```bash
+curl -X POST -H "Content-Type: application/json" -d @test-data/payload-itau-legitimo.json http://localhost:8080/api/fraud/analyze
+```
+
+### 2. Cenário: Transação Fraudulenta
+Testa uma transação suspeita, referenciando o `receipt_b_dot.png`. O Agente IA deve bloquear (isFraud: true) e acionar a Saga de Compensação.
+```bash
+curl -X POST -H "Content-Type: application/json" -d @test-data/payload-receipt-falso.json http://localhost:8080/api/fraud/analyze
+```
+
+### 3. Semeando Dados no RAG (Vector Store)
+Para popular o histórico de conhecimento da aplicação com uma transação:
+```bash
+curl -X POST -H "Content-Type: application/json" -d @test-data/test-payload.json http://localhost:8080/api/fraud/seed
+```
 
 ---
 
-## ⚙️ Configurando o Projeto
+## Estrutura do Workshop
 
-1. **Variáveis de Ambiente:**
-   Abra o terminal integrado do VS Code (que já estará rodando dentro do Linux do Dev Container) e renomeie o arquivo `.env.example` para `.env`:
-   ```bash
-   cp .env.example .env
-   ```
+Este repositório contém o código-fonte e o guia prático do workshop ministrado no **WTEC 2026.1**. O objetivo é demonstrar a transição de APIs CRUD tradicionais para **Agentes Cognitivos Multimodais** capazes de correlacionar metadados estruturados, fotos de cupons fiscais (visão) e áudios de autorização de voz (áudio) para identificar fraudes em transações financeiras em tempo real.
 
-2. **Chaves de API:**
-   Abra o arquivo `.env` e preencha as chaves:
-   - `OPENAI_API_KEY`: Crie uma chave grátis no [Google AI Studio](https://aistudio.google.com/app/apikey).
-   - `LANGFUSE_PUBLIC_KEY` e `LANGFUSE_SECRET_KEY`: Pegue no painel do Langfuse criado no passo anterior.
+---
 
-3. **Iniciando a Aplicação (Com Live Reload 🔄):**
-   Execute a aplicação Spring Boot pelo terminal ou sua IDE favorita (IntelliJ, VS Code):
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-   *Nota: O projeto utiliza o **Spring Boot DevTools**. Ao alterar o código da classe `FraudDetectionAgent.java`, basta salvar o arquivo (e acionar a compilação na IDE) para que o contexto da aplicação seja recarregado automaticamente, refletindo as alterações instantaneamente.*
+## 🚀 Como Iniciar a Prática (Passo a Passo)
+
+Para garantir que você consiga codificar e salvar suas alterações sem problemas de permissão, siga a ordem abaixo:
+
+### Passo 1: Fazer Fork do Repositório (Obrigatório)
+1. Estando nesta página, clique no botão **Fork** no canto superior direito do GitHub.
+2. Isso criará uma cópia idêntica deste projeto em sua conta pessoal do GitHub (ex: `github.com/seu-usuario/workshop-spring-ai-wtec-2026-1`).
+
+### Passo 2: Inicializar o Ambiente em Nuvem
+1. No seu repositório bifurcado (Fork), clique no botão verde **<> Code**.
+2. Selecione a aba **Codespaces** e clique em **Create codespace on main** (ou clique no badge abaixo no seu fork):
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/joelmaykon94/workshop-spring-ai-wtec-2026-1)
+
+---
+
+## 🛠️ Orquestração Automática
+
+Assim que o Codespace abrir no seu navegador, a configuração interna (`.devcontainer.json`) executará o Docker Compose em segundo plano automaticamente para subir a infraestrutura base de dados e mensageria:
+- **PostgreSQL** com a extensão `pgvector` (Para RAG).
+- **MinIO** (Armazenamento S3 para recibos).
+- **Kafka** (Mensageria assíncrona para orquestração da Saga).
+- **Langfuse** (Painel web para observabilidade da Inteligência Artificial).
+
+*(Nota: O servidor de IA Ollama foi removido da stack local para evitar sobrecarga de Memória RAM no Codespaces. A aplicação foi reconfigurada para rodar incrivelmente rápido e leve conectando-se a APIs de nuvem como Google Gemini via protocolo OpenAI.)*
 
 ---
 
 ## 📝 O Desafio Hands-on
+O repositório na branch `main` contém a estrutura de controllers e modelos pronta, mas as regras de busca vetorial e injeção multimodal estão vazias. Seu objetivo durante o minicurso é:
+1. Implementar a busca semântica em **`VectorSearchService.java`**.
+2. Configurar o **`ChatClient`** com Advisors de memória/RAG e Tools no **`FraudDetectionAgent.java`**.
+3. Construir o fluxo multimodal de processamento de imagem de cupons e áudio no agente.
 
-A branch `main` contém a estrutura do projeto (`Controllers`, `Services`, `Models`) pronta, mas o Cérebro do Agente está vazio!
-Seu objetivo durante o minicurso é abrir a classe **`FraudDetectionAgent.java`** e implementar a inteligência dela.
-
-👉 **[CLIQUE AQUI PARA ABRIR O GUIA PASSO A PASSO](PASSO_A_PASSO.md)** 👈
-
-Se ficar travado, você também pode consultar o código completo na branch **`solucao`**.
-
----
-
-## 🧪 Simulando o Tráfego em Tempo Real
-
-Após implementar seu Agente de IA, você pode testá-lo enviando rajadas de transações! Preparamos um Endpoint que cria 10 transações falsas, gera e faz upload automático de imagens de recibos, e envia para a IA julgar uma a uma.
-
-Com a aplicação rodando, abra outro terminal e execute:
-```bash
-curl -X POST http://localhost:8080/api/fraud/simulate
-```
-*Acompanhe no console do Spring Boot e no dashboard do Langfuse as análises sendo realizadas!*
+Se precisar de ajuda ou ficar travado, consulte o código completo na branch **`solucao`** ou faça checkout nos passos sequenciais do workshop (`git checkout passo-1`, etc.).
 
 ---
 
 ## 📚 Referências e Documentações
 
-*   **Spring AI:** [Visão Geral](https://spring.io/projects/spring-ai#overview) | [API do ChatClient](https://docs.spring.io/spring-ai/reference/api/chatclient.html)
-*   **Google AI Studio:** [Gemini API](https://aistudio.google.com/)
-*   **Observabilidade:** [Langfuse Docs](https://langfuse.com/docs)
+Para aprofundamento durante e após o workshop, consulte a documentação oficial das ferramentas que utilizamos:
+
+*   **Spring AI**
+    *   [Visão Geral do Spring AI](https://spring.io/projects/spring-ai#overview)
+    *   [API do ChatClient (Prompts e Chamadas)](https://docs.spring.io/spring-ai/reference/api/chatclient.html)
+    *   [Bancos de Dados Vetoriais (PGVector)](https://docs.spring.io/spring-ai/reference/api/vectordbs.html)
+    *   [Multimodalidade (Visão e Áudio)](https://docs.spring.io/spring-ai/reference/api/multimodality.html)
+*   **Inteligência Artificial**
+    *   [Google AI Studio (Gemini API)](https://aistudio.google.com/)
+*   **Infraestrutura e Observabilidade**
+    *   [Langfuse (LLM Observability)](https://langfuse.com/docs)
+    *   [Apache Kafka (Saga Pattern)](https://kafka.apache.org/documentation/)
+    *   [MinIO (Object Storage S3)](https://min.io/docs/minio/linux/index.html)
