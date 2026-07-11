@@ -3,18 +3,18 @@
 
 Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para Detecção de Fraudes usando Spring AI.
 
-## 🚀 Ambiente (Codespaces)
+## 🚀 Ambiente (Docker / Dev Containers)
 
-Este projeto foi otimizado para rodar diretamente no GitHub Codespaces. Ao iniciar o seu Codespace, o Docker Compose subirá **automaticamente** os serviços de banco e mensageria (PostgreSQL, Kafka, MinIO e Langfuse).
+Este projeto foi otimizado para rodar localmente utilizando Docker Compose ou VS Code Dev Containers. A infraestrutura subirá **automaticamente** os serviços de banco e mensageria (PostgreSQL, Kafka, MinIO e Langfuse).
 
 1. **Como verificar se os containers subiram:**
-   Abra o terminal do Codespaces e execute:
+   Abra o seu terminal local e execute:
    ```bash
    docker ps
    ```
 
 2. **Configurando a API da IA (Google Gemini 1.5 Flash):**
-   Para não sobrecarregar o Codespaces com modelos locais, o projeto está configurado para usar a API gratuita do Google Gemini.
+   Para manter o ambiente de desenvolvimento extremamente rápido e leve, o projeto está configurado para usar a API gratuita do Google Gemini em vez de processamento de modelos locais na GPU.
    - Crie uma chave de API grátis no [Google AI Studio](https://aistudio.google.com/app/apikey).
    
 3. **Pegando as chaves do Langfuse:**
@@ -32,11 +32,11 @@ Este projeto foi otimizado para rodar diretamente no GitHub Codespaces. Ao inici
 
 *(O projeto já está configurado para apontar automaticamente para o `localhost` para conectar ao Postgres, Kafka e MinIO de forma transparente!)*
 
-## 📊 Dashboards Web (Aba Ports)
+## 📊 Dashboards Web
 
-No VS Code do Codespaces, clique na aba **Ports** (Portas) na parte inferior. Certifique-se de alterar a *Visibility* (Visibilidade) para **Public** (Pública) clicando com o botão direito na porta desejada:
-*   **Langfuse (Porta 3000):** Painel de Observabilidade dos Prompts da IA. Crie uma conta local e gere suas chaves em Settings > API Keys.
-*   **MinIO (Porta 9001):** Nosso "S3" local. Login: `minioadmin / minioadmin`.
+Com os containers ativos, acesse os painéis no seu navegador:
+*   **Langfuse (http://localhost:3000):** Painel de Observabilidade dos Prompts da IA. Crie uma conta local e gere suas chaves em Settings > API Keys.
+*   **MinIO (http://localhost:9001):** Nosso "S3" local. Login: `minioadmin / minioadmin`.
 
 ## 🧪 Testando a API (cURL)
 
@@ -86,22 +86,26 @@ Para garantir que você consiga codificar e salvar suas alterações sem problem
 1. Estando nesta página, clique no botão **Fork** no canto superior direito do GitHub.
 2. Isso criará uma cópia idêntica deste projeto em sua conta pessoal do GitHub (ex: `github.com/seu-usuario/workshop-spring-ai-wtec-2026-1`).
 
-### Passo 2: Inicializar o Ambiente em Nuvem
-1. No seu repositório bifurcado (Fork), clique no botão verde **<> Code**.
-2. Selecione a aba **Codespaces** e clique em **Create codespace on main** (ou clique no badge abaixo no seu fork):
-
+### Passo 2: Inicializar o Ambiente Local
+1. Clone o repositório para sua máquina local (ex: `git clone https://github.com/seu-usuario/workshop-spring-ai-wtec-2026-1.git`).
+2. Abra a pasta do projeto no **Visual Studio Code**.
+3. Se você tiver a extensão **Dev Containers** instalada, um aviso aparecerá: **"Reopen in Container"**. Clique nele. Isso configurará o Java 21 e as extensões no VS Code sem precisar instalar nada na sua máquina física!
 
 ---
 
 ## 🛠️ Orquestração Automática
 
-Assim que o Codespace abrir no seu navegador, a configuração interna (`.devcontainer.json`) executará o Docker Compose em segundo plano automaticamente para subir a infraestrutura base de dados e mensageria:
+Para subir a infraestrutura base de dados e mensageria, execute o comando abaixo na raiz do projeto:
+```bash
+docker compose up -d
+```
+Isso iniciará:
 - **PostgreSQL** com a extensão `pgvector` (Para RAG).
 - **MinIO** (Armazenamento S3 para recibos).
 - **Kafka** (Mensageria assíncrona para orquestração da Saga).
 - **Langfuse** (Painel web para observabilidade da Inteligência Artificial).
 
-*(Nota: O servidor de IA Ollama foi removido da stack local para evitar sobrecarga de Memória RAM no Codespaces. A aplicação foi reconfigurada para rodar incrivelmente rápido e leve conectando-se a APIs de nuvem como Google Gemini via protocolo OpenAI.)*
+*(Nota: O servidor de IA Ollama foi removido da stack local para evitar sobrecarga de Memória RAM na máquina dos alunos. A aplicação foi reconfigurada para rodar conectando-se a APIs de nuvem como Google Gemini via protocolo OpenAI.)*
 
 ---
 
