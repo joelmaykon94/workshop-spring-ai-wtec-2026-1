@@ -1,9 +1,8 @@
 package com.example.fraud.controller;
-import com.example.fraud.model.*;
-import com.example.fraud.service.*;
-import com.example.fraud.config.*;
-
-
+import com.example.fraud.model.FraudAnalysis;
+import com.example.fraud.model.Transaction;
+import com.example.fraud.service.FraudService;
+import com.example.fraud.service.MinioService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

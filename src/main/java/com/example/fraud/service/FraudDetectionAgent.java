@@ -1,6 +1,7 @@
 package com.example.fraud.service;
 
-import com.example.fraud.model.*;
+import com.example.fraud.model.FraudAnalysis;
+import com.example.fraud.model.Transaction;
 import com.langfuse.client.LangfuseClient;
 import com.langfuse.client.resources.ingestion.requests.IngestionRequest;
 import com.langfuse.client.resources.ingestion.types.*;
@@ -51,11 +52,10 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         startLangfuseTrace(traceId, transaction);
 
         // =======================================================
-        // ETAPA 3: MULTIMODALIDADE (Visão e Áudio Computacional)
-        // Extrai a imagem do recibo e áudio de autorização do MinIO (S3).
+        // ETAPA 3: MULTIMODALIDADE (Visão Computacional)
+        // Extrai a imagem do recibo do MinIO (S3) para análise visual.
         // =======================================================
         byte[] imageBytes = extractReceiptImage(transaction);
-        byte[] audioBytes = extractVoiceAuth(transaction);
 
         // =======================================================
         // ETAPA 4: ENGENHARIA DE PROMPT
@@ -64,9 +64,7 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         String systemPrompt = """
             Você é um agente sênior de detecção de fraudes financeiras.
             Analise a transação fornecida e decida se é fraudulenta.
-            Leve em consideração o histórico de transações similares (RAG).
-            Se houver imagem, avalie a veracidade do comprovante fiscal.
-            Se houver áudio, ele contém a autorização por voz do cliente. Transcreva-o mentalmente e verifique se o tom e o que é falado condizem com a transação ou se parece um golpista com muita pressa.
+            Leve em consideração o histórico de transações similares (RAG) e a imagem do comprovante.
             Sempre responda em português.
             """;
             
@@ -90,9 +88,6 @@ public class FraudDetectionAgent implements FraudAnalyzer {
                 u.text(userPrompt);
                 if (imageBytes != null) {
                     u.media(new Media(MimeTypeUtils.IMAGE_JPEG, new org.springframework.core.io.ByteArrayResource(imageBytes)));
-                }
-                if (audioBytes != null) {
-                    u.media(new Media(MimeTypeUtils.parseMimeType("audio/mpeg"), new org.springframework.core.io.ByteArrayResource(audioBytes)));
                 }
             })
             .call()
@@ -125,13 +120,6 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         } else {
             return minioService.getImageBytes(imageStr);
         }
-    }
-
-    private byte[] extractVoiceAuth(Transaction transaction) {
-        if (transaction.voiceAuth() == null || transaction.voiceAuth().isBlank()) {
-            return null;
-        }
-        return minioService.getImageBytes(transaction.voiceAuth());
     }
 
     private void startLangfuseTrace(String traceId, Transaction transaction) {
