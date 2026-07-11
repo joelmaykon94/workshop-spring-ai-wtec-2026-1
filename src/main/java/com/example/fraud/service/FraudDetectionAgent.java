@@ -31,10 +31,6 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         this.langfuseClient = langfuseClient;
     }
 
-    /**
-     * Orquestrador Principal do Agente de IA.
-     * Este método foi desenhado em etapas claras para o Workshop!
-     */
     @Override
     public FraudAnalysis analyze(Transaction transaction) {
         
@@ -91,7 +87,7 @@ public class FraudDetectionAgent implements FraudAnalyzer {
                 }
             })
             .call()
-            .entity(FraudAnalysis.class); // O Spring AI cuida de fazer o parser do JSON pro Java Record!
+            .entity(FraudAnalysis.class);
             
         OffsetDateTime endTime = OffsetDateTime.now();
 
@@ -103,11 +99,6 @@ public class FraudDetectionAgent implements FraudAnalyzer {
 
         return analysis;
     }
-
-
-    // -------------------------------------------------------------------------
-    // MÉTODOS AUXILIARES (Escondendo a complexidade técnica para facilitar a aula)
-    // -------------------------------------------------------------------------
 
     private byte[] extractReceiptImage(Transaction transaction) {
         if (transaction.receiptImage() == null || transaction.receiptImage().isBlank()) {
@@ -150,7 +141,7 @@ public class FraudDetectionAgent implements FraudAnalyzer {
                             .id(UUID.randomUUID().toString())
                             .timestamp(start.toString())
                             .body(TraceBody.builder()
-                                    .id(traceId) // Upsert no Trace original
+                                    .id(traceId)
                                     .input(userPrompt)
                                     .output(finalDecision)
                                     .build())
@@ -159,7 +150,7 @@ public class FraudDetectionAgent implements FraudAnalyzer {
                             .id(UUID.randomUUID().toString())
                             .timestamp(start.toString())
                             .body(CreateGenerationBody.builder()
-                                    .id(UUID.randomUUID().toString()) // Geração vinculada ao Trace
+                                    .id(UUID.randomUUID().toString())
                                     .traceId(traceId)
                                     .name("Gemini-Fraud-Analysis")
                                     .model("gemini-3.5-flash")
@@ -167,7 +158,6 @@ public class FraudDetectionAgent implements FraudAnalyzer {
                                     .endTime(end)
                                     .input(fullInput)
                                     .output(analysis.reason())
-                                    // Tokens simulados devido a limitação atual do Spring AI M5 com Gemini
                                     .usage(IngestionUsage.of(Usage.builder().input(1500).output(250).total(1750).build()))
                                     .build())
                             .build()))

@@ -13,10 +13,6 @@ public class TransactionSagaService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    /**
-     * Passo 1 da Saga: Inicia o processo emitindo evento de fraude detectada
-     * para que o serviço de Ledger (Conta) desfaça a transação.
-     */
     public void initiateCompensation(String transactionId, String reason) {
         System.out.println("[SAGA] Iniciando compensação (estorno) para a transação " + transactionId);
         String payload = String.format("{\"transactionId\": \"%s\", \"action\": \"ROLLBACK\", \"reason\": \"%s\"}", transactionId, reason);
@@ -24,10 +20,6 @@ public class TransactionSagaService {
         kafkaTemplate.send("fraud-compensations", transactionId, payload);
     }
 
-    /**
-     * Passo 2 da Saga (Simulação): Ouve o próprio tópico para simular o 
-     * Ledger-Service recebendo o comando e estornando o dinheiro.
-     */
     @KafkaListener(topics = "fraud-compensations", groupId = "fraud-group")
     public void consumeCompensationEvent(String message) {
         System.out.println("==================================================");

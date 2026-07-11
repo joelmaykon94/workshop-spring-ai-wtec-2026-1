@@ -57,7 +57,6 @@ public class SimulationController {
                     String imgName = "sim_receipt_" + i + ".png";
                     System.out.println("\n[WAITING] [" + (i+1) + "/10] Processando transação ID: " + s.get("id"));
 
-                    // Baixa a imagem dinamicamente baseada no texto do recibo e joga no MinIO
                     String text = URLEncoder.encode((String) s.get("imgText"), StandardCharsets.UTF_8);
                     String url = "https://placehold.co/400x400/eeeeee/333333.png?text=" + text;
                     byte[] imageBytes = restTemplate.getForObject(url, byte[].class);
@@ -66,7 +65,6 @@ public class SimulationController {
                         minioService.uploadImage(imgName, imageBytes, "image/png");
                     }
 
-                    // Baixa o áudio dinamicamente (TTS) e joga no MinIO
                     String audioName = "sim_audio_" + i + ".mp3";
                     String audioText = URLEncoder.encode((String) s.get("audioText"), StandardCharsets.UTF_8);
                     String ttsUrl = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=" + audioText + "&tl=pt-BR";
@@ -81,7 +79,6 @@ public class SimulationController {
                         audioName = null;
                     }
 
-                    // Monta a transação
                     Transaction tx = new Transaction(
                             (String) s.get("id"),
                             (String) s.get("userId"),
@@ -95,7 +92,6 @@ public class SimulationController {
                             audioName
                     );
 
-                    // Invoca a camada de Service (Padrão MVC Correto)
                     if ("seed".equals(s.get("type"))) {
                         fraudService.seedTransaction(tx);
                         System.out.println("[SUCCESS] " + s.get("id") + " -> RAG Seed registrado com sucesso na base de conhecimento.");
@@ -108,8 +104,6 @@ public class SimulationController {
                 } catch (Exception e) {
                     System.err.println("Erro na transação " + scenarios.get(i).get("id") + ": " + e.getMessage());
                 } finally {
-                    // O sleep PRECISA ficar no finally (ou garantido no loop).
-                    // Senão, quando dá erro (ex: 429), ele pula o sleep e dispara as próximas 7 requisições de uma vez (efeito cascata!)
                     try {
                         if (i < scenarios.size() - 1) {
                             TimeUnit.SECONDS.sleep(15);

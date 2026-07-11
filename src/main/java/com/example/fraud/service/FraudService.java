@@ -20,7 +20,6 @@ public class FraudService {
     public FraudAnalysis processTransaction(Transaction transaction) {
         FraudAnalysis analysis = fraudAnalyzer.analyze(transaction);
 
-        // Se a IA classificar como fraude, dispara o evento de compensação no Kafka (SAGA)
         if (analysis.isFraud()) {
             sagaService.initiateCompensation(transaction.id(), analysis.reason());
         }

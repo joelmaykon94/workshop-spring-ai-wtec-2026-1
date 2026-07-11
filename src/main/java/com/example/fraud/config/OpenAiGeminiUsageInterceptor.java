@@ -28,14 +28,12 @@ public class OpenAiGeminiUsageInterceptor implements ClientHttpRequestIntercepto
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         ClientHttpResponse response = execution.execute(request, body);
         
-        // Se a resposta for sucesso, nós interceptamos o JSON para garantir o bloco de uso
         if (response.getStatusCode().is2xxSuccessful()) {
             byte[] responseBody = response.getBody().readAllBytes();
             String responseStr = new String(responseBody, StandardCharsets.UTF_8);
             
             try {
                 JsonNode rootNode = mapper.readTree(responseStr);
-                // Se a API do Gemini (compatibilidade OpenAI) não retornou o bloco "usage", a gente injeta!
                 if (rootNode.isObject() && !rootNode.has("usage")) {
                     ObjectNode usageNode = mapper.createObjectNode();
                     usageNode.put("prompt_tokens", 1500);
@@ -45,7 +43,6 @@ public class OpenAiGeminiUsageInterceptor implements ClientHttpRequestIntercepto
                     responseStr = mapper.writeValueAsString(rootNode);
                 }
             } catch (Exception e) {
-                // Falhou o parse do JSON, segue a vida sem mexer
             }
             
             return new CustomClientHttpResponse(response, responseStr.getBytes(StandardCharsets.UTF_8));
