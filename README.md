@@ -1,5 +1,6 @@
 # Workshop Spring AI - WTEC 2026
 
+![Arquitetura Fraud Detection](arquitetura.jpg)
 
 Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para Detecção de Fraudes usando Spring AI.
 
