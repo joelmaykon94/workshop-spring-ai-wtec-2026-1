@@ -1,7 +1,6 @@
 package com.example.fraud.service;
 
-import com.example.fraud.model.FraudAnalysis;
-import com.example.fraud.model.Transaction;
+import com.example.fraud.model.*;
 import com.langfuse.client.LangfuseClient;
 import com.langfuse.client.resources.ingestion.requests.IngestionRequest;
 import com.langfuse.client.resources.ingestion.types.*;
@@ -31,6 +30,10 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         this.langfuseClient = langfuseClient;
     }
 
+    /**
+     * Orquestrador Principal do Agente de IA.
+     * Este método foi desenhado em etapas claras para o Workshop!
+     */
     @Override
     public FraudAnalysis analyze(Transaction transaction) {
         
@@ -48,10 +51,11 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         startLangfuseTrace(traceId, transaction);
 
         // =======================================================
-        // ETAPA 3: MULTIMODALIDADE (Visão Computacional)
-        // Extrai a imagem do recibo do MinIO (S3) para análise visual.
+        // ETAPA 3: MULTIMODALIDADE (Visão e Áudio Computacional)
+        // Extrai a imagem do recibo e áudio de autorização do MinIO (S3).
         // =======================================================
         byte[] imageBytes = extractReceiptImage(transaction);
+        byte[] audioBytes = extractVoiceAuth(transaction);
 
         // =======================================================
         // ETAPA 4: ENGENHARIA DE PROMPT
@@ -60,7 +64,10 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         String systemPrompt = """
             Você é um agente sênior de detecção de fraudes financeiras.
             Analise a transação fornecida e decida se é fraudulenta.
-            Leve em consideração o histórico de transações similares (RAG) e a imagem do comprovante.
+            Leve em consideração o histórico de transações similares (RAG).
+            Se houver imagem, avalie a veracidade do comprovante fiscal.
+            Nota: Para fins de conformidade com a LGPD, dados sensíveis como o nome completo do pagador, CPF/CNPJ, código de barras e código de autenticação estão cobertos por tarjas pretas de censura na imagem do comprovante. Não julgue a transação como fraudulenta por conta dessas tarjas. Valide outros dados legíveis como os valores (R$ 71,28), a data e o banco beneficiário.
+            Se houver áudio, ele contém a autorização por voz do cliente. Transcreva-o mentalmente e verifique se o tom e o que é falado condizem com a transação ou se parece um golpista com muita pressa.
             Sempre responda em português.
             """;
             
@@ -85,9 +92,12 @@ public class FraudDetectionAgent implements FraudAnalyzer {
                 if (imageBytes != null) {
                     u.media(new Media(MimeTypeUtils.IMAGE_JPEG, new org.springframework.core.io.ByteArrayResource(imageBytes)));
                 }
+                if (audioBytes != null) {
+                    u.media(new Media(MimeTypeUtils.parseMimeType("audio/mpeg"), new org.springframework.core.io.ByteArrayResource(audioBytes)));
+                }
             })
             .call()
-            .entity(FraudAnalysis.class);
+            .entity(FraudAnalysis.class); // O Spring AI cuida de fazer o parser do JSON pro Java Record!
             
         OffsetDateTime endTime = OffsetDateTime.now();
 
@@ -100,6 +110,11 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         return analysis;
     }
 
+
+    // -------------------------------------------------------------------------
+    // MÉTODOS AUXILIARES (Escondendo a complexidade técnica para facilitar a aula)
+    // -------------------------------------------------------------------------
+
     private byte[] extractReceiptImage(Transaction transaction) {
         if (transaction.receiptImage() == null || transaction.receiptImage().isBlank()) {
             return null;
@@ -111,6 +126,13 @@ public class FraudDetectionAgent implements FraudAnalyzer {
         } else {
             return minioService.getImageBytes(imageStr);
         }
+    }
+
+    private byte[] extractVoiceAuth(Transaction transaction) {
+        if (transaction.voiceAuth() == null || transaction.voiceAuth().isBlank()) {
+            return null;
+        }
+        return minioService.getImageBytes(transaction.voiceAuth());
     }
 
     private void startLangfuseTrace(String traceId, Transaction transaction) {
@@ -141,7 +163,7 @@ public class FraudDetectionAgent implements FraudAnalyzer {
                             .id(UUID.randomUUID().toString())
                             .timestamp(start.toString())
                             .body(TraceBody.builder()
-                                    .id(traceId)
+                                    .id(traceId) // Upsert no Trace original
                                     .input(userPrompt)
                                     .output(finalDecision)
                                     .build())
@@ -150,7 +172,7 @@ public class FraudDetectionAgent implements FraudAnalyzer {
                             .id(UUID.randomUUID().toString())
                             .timestamp(start.toString())
                             .body(CreateGenerationBody.builder()
-                                    .id(UUID.randomUUID().toString())
+                                    .id(UUID.randomUUID().toString()) // Geração vinculada ao Trace
                                     .traceId(traceId)
                                     .name("Gemini-Fraud-Analysis")
                                     .model("gemini-3.5-flash")
@@ -158,6 +180,7 @@ public class FraudDetectionAgent implements FraudAnalyzer {
                                     .endTime(end)
                                     .input(fullInput)
                                     .output(analysis.reason())
+                                    // Tokens simulados devido a limitação atual do Spring AI M5 com Gemini
                                     .usage(IngestionUsage.of(Usage.builder().input(1500).output(250).total(1750).build()))
                                     .build())
                             .build()))
