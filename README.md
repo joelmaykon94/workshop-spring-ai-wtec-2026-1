@@ -85,7 +85,8 @@ Para garantir que você consiga codificar e salvar suas alterações sem problem
 
 ### Passo 1: Fazer Fork do Repositório (Obrigatório)
 1. Estando nesta página, clique no botão **Fork** no canto superior direito do GitHub.
-2. Isso criará uma cópia idêntica deste projeto em sua conta pessoal do GitHub (ex: `github.com/seu-usuario/workshop-spring-ai-wtec-2026-1`).
+2. Certifique-se de **desmarcar** a opção *"Copy the main branch only"* (Copiar apenas a branch main), pois precisaremos tanto da branch `main` quanto da branch `solucao` durante a prática.
+3. Isso criará uma cópia idêntica deste projeto em sua conta pessoal do GitHub (ex: `github.com/seu-usuario/workshop-spring-ai-wtec-2026-1`).
 
 ### Passo 2: Inicializar o Ambiente Local
 1. Clone o repositório para sua máquina local (ex: `git clone https://github.com/seu-usuario/workshop-spring-ai-wtec-2026-1.git`).
@@ -106,8 +107,6 @@ Isso iniciará:
 - **Kafka** (Mensageria assíncrona para orquestração da Saga).
 - **Langfuse** (Painel web para observabilidade da Inteligência Artificial).
 
-*(Nota: O servidor de IA Ollama foi removido da stack local para evitar sobrecarga de Memória RAM na máquina dos alunos. A aplicação foi reconfigurada para rodar conectando-se a APIs de nuvem como Google Gemini via protocolo OpenAI.)*
-
 ---
 
 ## 📝 O Desafio Hands-on
@@ -116,7 +115,7 @@ O repositório na branch `main` contém a estrutura de controllers e modelos pro
 2. Configurar o **`ChatClient`** com Advisors de memória/RAG e Tools no **`FraudDetectionAgent.java`**.
 3. Construir o fluxo multimodal de processamento de imagem de cupons e áudio no agente.
 
-Se precisar de ajuda ou ficar travado, consulte o código completo na branch **`solucao`** ou faça checkout nos passos sequenciais do workshop (`git checkout passo-1`, etc.).
+Se precisar de ajuda ou ficar travado, consulte o código completo na branch **`solucao`**.
 
 ---
 
