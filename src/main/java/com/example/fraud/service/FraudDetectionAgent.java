@@ -1,6 +1,7 @@
 package com.example.fraud.service;
 
-import com.example.fraud.model.*;
+import com.example.fraud.model.FraudAnalysis;
+import com.example.fraud.model.Transaction;
 import com.langfuse.client.LangfuseClient;
 import com.langfuse.client.resources.ingestion.requests.IngestionRequest;
 import com.langfuse.client.resources.ingestion.types.*;
