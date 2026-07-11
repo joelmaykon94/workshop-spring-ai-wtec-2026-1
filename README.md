@@ -18,16 +18,19 @@ Este projeto foi otimizado para rodar localmente utilizando Docker Compose ou VS
    Para manter o ambiente de desenvolvimento extremamente rápido e leve, o projeto está configurado para usar a API gratuita do Google Gemini em vez de processamento de modelos locais na GPU.
    - Crie uma chave de API grátis no [Google AI Studio](https://aistudio.google.com/app/apikey).
    
-3. **Pegando as chaves do Langfuse:**
-   - Acesse o painel do Langfuse (Porta `3000` na aba Ports).
-   - Crie um projeto, vá em **Settings** > **API Keys** e crie novas chaves (Public e Secret Key).
+3. **Obtendo as chaves do Langfuse:**
+   - Acesse o painel do Langfuse em `http://localhost:3000`.
+   - Crie uma conta de teste inicial para login.
+   - No fluxo de boas-vindas, crie uma organização (ex: `org-teste`) e depois um projeto (ex: `projeto-teste`).
+   - A tela inicial de "Setup Tracing" será exibida com a opção de copiar a **Public Key**, **Secret Key** e **Host**.
 
-4. **Rodando o Projeto (Terminal):**
-   Execute o comando abaixo substituindo as chaves pelas suas:
+4. **Configurando as Variáveis de Ambiente:**
+   - Na raiz do projeto, duplique o arquivo `.env.example` e renomeie-o para `.env`.
+   - Abra o arquivo `.env` e preencha as variáveis de ambiente com as chaves obtidas (`OPENAI_API_KEY` do Google AI Studio, e as chaves `LANGFUSE_PUBLIC_KEY` e `LANGFUSE_SECRET_KEY` do Langfuse).
+
+5. **Executando a Aplicação:**
+   - Com o arquivo `.env` configurado e salvo, basta iniciar a aplicação pelo terminal:
    ```bash
-   OPENAI_API_KEY="sua_chave_do_google" \
-   LANGFUSE_PUBLIC_KEY="pk-lf-..." \
-   LANGFUSE_SECRET_KEY="sk-lf-..." \
    ./mvnw spring-boot:run
    ```
 
