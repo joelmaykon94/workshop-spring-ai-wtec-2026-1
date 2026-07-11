@@ -17,12 +17,6 @@ public class VectorSearchService {
         this.vectorStore = vectorStore;
     }
 
-    /**
-     * Busca transações suspeitas similares no banco de dados vetorial (pgvector).
-     * 
-     * @param transaction A transação atual que está sendo analisada.
-     * @return Lista de strings representando as transações similares encontradas.
-     */
     public List<String> findSimilarSuspiciousTransactions(Transaction transaction) {
         // 1. Converter a transação em texto para a busca (RAG)
         String searchQuery = String.format(
@@ -41,11 +35,6 @@ public class VectorSearchService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Adiciona uma transação conhecida como fraudulenta ao banco de dados vetorial.
-     * Isso alimentará a base de conhecimento do RAG para futuras detecções.
-     * @param transaction Transação fraudulenta.
-     */
     public void addSuspiciousTransaction(Transaction transaction) {
         String content = String.format(
             "merchant: %s, location: %s, amount: %.2f",

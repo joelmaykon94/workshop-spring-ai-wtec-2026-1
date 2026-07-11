@@ -28,11 +28,6 @@ public class MinioService {
                 .build();
     }
 
-    /**
-     * Recupera a imagem do comprovante ou documento do S3/MinIO.
-     * @param objectName O nome do arquivo salvo no bucket.
-     * @return Os bytes da imagem para passar ao Llama 3.2-Vision.
-     */
     public byte[] getImageBytes(String objectName) {
         try (InputStream stream = minioClient.getObject(
                 GetObjectArgs.builder()
@@ -42,7 +37,6 @@ public class MinioService {
             
             return stream.readAllBytes();
         } catch (Exception e) {
-            // Em produção deve haver um log e tratamento de erro melhor
             System.err.println("Erro ao baixar imagem do MinIO: " + e.getMessage());
             return null;
         }
