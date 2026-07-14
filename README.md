@@ -1,8 +1,52 @@
-# Workshop Spring AI - WTEC 2026
+<div align="center">
 
-![Arquitetura Fraud Detection](arquitetura.jpg)
+<img src="arquitetura.jpg" alt="Workshop Spring AI Banner" width="100%" />
 
-Repositório oficial do Workshop sobre Agentes de Inteligência Artificial para Detecção de Fraudes usando Spring AI.
+<br/>
+
+[![Follow on LinkedIn](https://img.shields.io/badge/Follow%20on-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/)
+[![Follow on X](https://img.shields.io/badge/Follow%20on-X-000000?style=for-the-badge&logo=x&logoColor=white)](https://twitter.com/)
+
+[Português](#) | [English](#) | [Español](#)
+
+<br/>
+
+# 🌟 Workshop Spring AI - WTEC 2026
+
+**100+ AI Agents & RAG apps you can actually run — clone, customize, ship.** <br>
+*Detecção de Fraudes com LLMs, RAG, Visão Computacional e Agentes Autônomos em Spring Boot.*
+
+[![Stars](https://img.shields.io/github/stars/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=FDD835&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/stargazers)
+[![Forks](https://img.shields.io/github/forks/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=00BFFF&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/network/members)
+[![Contributors](https://img.shields.io/github/contributors/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=00FF7F&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/graphs/contributors)
+[![License](https://img.shields.io/badge/License-Apache--2.0-8A2BE2?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
+[![Last Commit](https://img.shields.io/github/last-commit/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=FF4500)](#)
+
+<br/>
+
+[![🚀 Quick Start](https://img.shields.io/badge/🚀_Quick_Start-f3f4f6?style=flat-square)](#-como-iniciar-a-prática-passo-a-passo)
+[![📁 Browse Templates](https://img.shields.io/badge/📁_Browse_Templates-f3f4f6?style=flat-square)](#-o-desafio-hands-on)
+[![📚 Step-by-Step Tutorials](https://img.shields.io/badge/📚_Step--by--Step_Tutorials-f3f4f6?style=flat-square)](#-o-desafio-hands-on)
+
+<br/>
+
+[![GitHub Trending](https://img.shields.io/badge/🏆_GITHUB_TRENDING-%231_Repository_Of_The_Day-f3f4f6?style=for-the-badge&color=white&labelColor=black)]()
+
+</div>
+
+---
+
+## 💡 Por que este projeto existe?
+
+Você não precisaria ter que reconstruir o mesmo pipeline RAG, loop de agente ou integração com ferramentas do zero a cada novo projeto corporativo com LLMs.
+
+**O Workshop Spring AI - WTEC 2026** é um "cookbook" de arquiteturas avançadas pronto para uso - código base que você pode clonar, personalizar e aplicar em produção. O objetivo é demonstrar a transição de APIs CRUD tradicionais para **Agentes Cognitivos Multimodais** capazes de correlacionar metadados, fotos de cupons fiscais e áudios de autorização.
+
+* 🛠️ **Construído à mão, não gerado** - Cada fluxo de agente é original e reflete um caso de uso real testado de ponta a ponta.
+* 🚀 **Roda em poucos comandos** - Sem "se vira aí" para subir a infraestrutura. Tudo automatizado no Dev Containers e Docker Compose.
+* 🧠 **Cobre a stack de IA moderna** - Agentes Cognitivos, Ferramentas de IA (Tools/Functions), Visão Multimodal, Áudio, RAG (Vector Stores) e Observabilidade com Langfuse.
+
+---
 
 ## 🚀 Ambiente (Docker / Dev Containers)
 
@@ -36,11 +80,45 @@ Este projeto foi otimizado para rodar localmente utilizando Docker Compose ou VS
 
 *(O projeto já está configurado para apontar automaticamente para o `localhost` para conectar ao Postgres, Kafka e MinIO de forma transparente!)*
 
+---
+
 ## 📊 Dashboards Web
 
 Com os containers ativos, acesse os painéis no seu navegador:
 *   **Langfuse (http://localhost:3000):** Painel de Observabilidade dos Prompts da IA. Crie uma conta local e gere suas chaves em Settings > API Keys.
 *   **MinIO (http://localhost:9001):** Nosso "S3" local. Login: `minioadmin / minioadmin`.
+
+---
+
+## 🚀 Como Iniciar a Prática (Passo a Passo)
+
+Para garantir que você consiga codificar e salvar suas alterações sem problemas de permissão, siga a ordem abaixo:
+
+### Passo 1: Fazer Fork do Repositório (Obrigatório)
+1. Estando nesta página, clique no botão **Fork** no canto superior direito do GitHub.
+2. Certifique-se de **desmarcar** a opção *"Copy the main branch only"* (Copiar apenas a branch main), pois precisaremos tanto da branch `main` quanto da branch `solucao` durante a prática.
+3. Isso criará uma cópia idêntica deste projeto em sua conta pessoal do GitHub (ex: `github.com/seu-usuario/workshop-spring-ai-wtec-2026-1`).
+
+### Passo 2: Inicializar o Ambiente Local
+1. Clone o repositório para sua máquina local (ex: `git clone https://github.com/seu-usuario/workshop-spring-ai-wtec-2026-1.git`).
+2. Abra a pasta do projeto no **Visual Studio Code**.
+3. Se você tiver a extensão **Dev Containers** instalada, um aviso aparecerá: **"Reopen in Container"**. Clique nele. Isso configurará o Java 21 e as extensões no VS Code sem precisar instalar nada na sua máquina física!
+
+---
+
+## 🛠️ Orquestração Automática
+
+Para subir a infraestrutura base de dados e mensageria, execute o comando abaixo na raiz do projeto:
+```bash
+docker compose up -d
+```
+Isso iniciará:
+- **PostgreSQL** com a extensão `pgvector` (Para RAG).
+- **MinIO** (Armazenamento S3 para recibos).
+- **Kafka** (Mensageria assíncrona para orquestração da Saga).
+- **Langfuse** (Painel web para observabilidade da Inteligência Artificial).
+
+---
 
 ## 🧪 Testando a API (cURL)
 
@@ -73,42 +151,6 @@ Para popular o histórico de conhecimento da aplicação com uma transação:
 ```bash
 curl -X POST -H "Content-Type: application/json" -d @test-data/test-payload.json http://localhost:8080/api/fraud/seed
 ```
-
----
-
-## Estrutura do Workshop
-
-Este repositório contém o código-fonte e o guia prático do workshop ministrado no **WTEC 2026.1**. O objetivo é demonstrar a transição de APIs CRUD tradicionais para **Agentes Cognitivos Multimodais** capazes de correlacionar metadados estruturados, fotos de cupons fiscais (visão) e áudios de autorização de voz (áudio) para identificar fraudes em transações financeiras em tempo real.
-
----
-
-## 🚀 Como Iniciar a Prática (Passo a Passo)
-
-Para garantir que você consiga codificar e salvar suas alterações sem problemas de permissão, siga a ordem abaixo:
-
-### Passo 1: Fazer Fork do Repositório (Obrigatório)
-1. Estando nesta página, clique no botão **Fork** no canto superior direito do GitHub.
-2. Certifique-se de **desmarcar** a opção *"Copy the main branch only"* (Copiar apenas a branch main), pois precisaremos tanto da branch `main` quanto da branch `solucao` durante a prática.
-3. Isso criará uma cópia idêntica deste projeto em sua conta pessoal do GitHub (ex: `github.com/seu-usuario/workshop-spring-ai-wtec-2026-1`).
-
-### Passo 2: Inicializar o Ambiente Local
-1. Clone o repositório para sua máquina local (ex: `git clone https://github.com/seu-usuario/workshop-spring-ai-wtec-2026-1.git`).
-2. Abra a pasta do projeto no **Visual Studio Code**.
-3. Se você tiver a extensão **Dev Containers** instalada, um aviso aparecerá: **"Reopen in Container"**. Clique nele. Isso configurará o Java 21 e as extensões no VS Code sem precisar instalar nada na sua máquina física!
-
----
-
-## 🛠️ Orquestração Automática
-
-Para subir a infraestrutura base de dados e mensageria, execute o comando abaixo na raiz do projeto:
-```bash
-docker compose up -d
-```
-Isso iniciará:
-- **PostgreSQL** com a extensão `pgvector` (Para RAG).
-- **MinIO** (Armazenamento S3 para recibos).
-- **Kafka** (Mensageria assíncrona para orquestração da Saga).
-- **Langfuse** (Painel web para observabilidade da Inteligência Artificial).
 
 ---
 
