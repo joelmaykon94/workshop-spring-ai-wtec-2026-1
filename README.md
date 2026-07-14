@@ -1,10 +1,14 @@
 <div align="center">
+
 <img src="arquitetura.jpg" alt="Workshop Spring AI Banner" width="100%" />
+
 <br/>
+
 [![Follow on LinkedIn](https://img.shields.io/badge/Follow%20on-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/joelmaykon)
 [![Follow on Instagram](https://img.shields.io/badge/Follow%20on-Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/joelmaykon94)
 
 [Português](#-português) | [English](#-english) | [Español](#-español)
+
 </div>
 
 ---
@@ -17,16 +21,22 @@
 *Detecção de Fraudes com LLMs, RAG, Visão Computacional e Agentes Autônomos em Spring Boot.*
 
 <div align="center">
+
 [![Stars](https://img.shields.io/github/stars/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=FDD835&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/stargazers)
 [![Forks](https://img.shields.io/github/forks/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=00BFFF&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/network/members)
 [![Contributors](https://img.shields.io/github/contributors/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=00FF7F&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/graphs/contributors)
 [![License](https://img.shields.io/badge/License-Apache--2.0-8A2BE2?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
+
 <br/>
+
 [![🚀 Quick Start](https://img.shields.io/badge/🚀_Quick_Start-f3f4f6?style=flat-square)](#-como-iniciar-a-prática-passo-a-passo)
 [![📁 Browse Templates](https://img.shields.io/badge/📁_Browse_Templates-f3f4f6?style=flat-square)](#-o-desafio-hands-on)
 [![📚 Step-by-Step Tutorials](https://img.shields.io/badge/📚_Step--by--Step_Tutorials-f3f4f6?style=flat-square)](#-o-desafio-hands-on)
+
 <br/>
+
 [![GitHub Trending](https://img.shields.io/badge/🏆_GITHUB_TRENDING-%231_Repository_Of_The_Day-f3f4f6?style=for-the-badge&color=white&labelColor=black)]()
+
 </div>
 
 ## 💡 Por que este projeto existe?
@@ -55,10 +65,12 @@ Este projeto foi otimizado para rodar localmente utilizando Docker Compose ou VS
 *Fraud Detection with LLMs, RAG, Computer Vision, and Autonomous Agents in Spring Boot.*
 
 <div align="center">
+
 [![Stars](https://img.shields.io/github/stars/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=FDD835&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/stargazers)
 [![Forks](https://img.shields.io/github/forks/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=00BFFF&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/network/members)
 [![Contributors](https://img.shields.io/github/contributors/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=00FF7F&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/graphs/contributors)
 [![License](https://img.shields.io/badge/License-Apache--2.0-8A2BE2?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
+
 </div>
 
 ## 💡 Why does this project exist?
@@ -87,10 +99,12 @@ This project has been optimized to run locally using Docker Compose or VS Code D
 *Detección de Fraudes con LLMs, RAG, Visión Computacional y Agentes Autónomos en Spring Boot.*
 
 <div align="center">
+
 [![Stars](https://img.shields.io/github/stars/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=FDD835&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/stargazers)
 [![Forks](https://img.shields.io/github/forks/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=00BFFF&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/network/members)
 [![Contributors](https://img.shields.io/github/contributors/joelmaykon94/workshop-spring-ai?style=for-the-badge&color=00FF7F&logo=github&logoColor=black)](https://github.com/joelmaykon94/workshop-spring-ai/graphs/contributors)
 [![License](https://img.shields.io/badge/License-Apache--2.0-8A2BE2?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
+
 </div>
 
 ## 💡 ¿Por qué existe este proyecto?
@@ -107,4 +121,3 @@ Este proyecto ha sido optimizado para ejecutarse localmente utilizando Docker Co
 3. **Obteniendo las claves de Langfuse:** Accede a `http://localhost:3000` y crea tu proyecto.
 4. **Variables de Entorno:** Copia `.env.example` a `.env` y completa las claves.
 5. **Ejecutando:** `./mvnw spring-boot:run`
-
