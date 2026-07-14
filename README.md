@@ -4,10 +4,10 @@
 
 <br/>
 
-[![Follow on LinkedIn](https://img.shields.io/badge/Follow%20on-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/)
-[![Follow on X](https://img.shields.io/badge/Follow%20on-X-000000?style=for-the-badge&logo=x&logoColor=white)](https://twitter.com/)
+[![Follow on LinkedIn](https://img.shields.io/badge/Follow%20on-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/joelmaykon)
+[![Follow on Instagram](https://img.shields.io/badge/Follow%20on-Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/joelmaykon94)
 
-[Português](#) | [English](#) | [Español](#)
+[Português](README.md) | [English](README.en.md) | [Español](README.es.md)
 
 <br/>
 
